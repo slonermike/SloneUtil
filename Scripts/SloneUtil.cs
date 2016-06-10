@@ -156,10 +156,10 @@ public static class SloneUtil
 	// to: ending value, returned if pct is 1.0
 	// pct: percentage (0.0-inf) along the continuum between from and to
 	// 
-    public static float LerpUnbounded(float from, float to, float pct)
-    {
-        return from + ((to - from) * pct);
-    }
+	public static float LerpUnbounded(float from, float to, float pct)
+	{
+		return from + ((to - from) * pct);
+	}
 
 	// Lerp a vector, continuing beyond 100%.
 	//
@@ -167,10 +167,10 @@ public static class SloneUtil
 	// to: ending value, returned if pct is 1.0
 	// pct: percentage (0.0-inf) along the continuum between from and to
 	// 
-    public static Vector2 LerpUnbounded(Vector2 from, Vector2 to, float pct)
-    {
-        return from + ((to - from) * pct);
-    }
+	public static Vector2 LerpUnbounded(Vector2 from, Vector2 to, float pct)
+	{
+		return from + ((to - from) * pct);
+	}
 
 	const int MINUTE_MASK = 0x3f;		// 6 bits (max 63)
 	const int HOUR_MASK = 0x7c0;		// 5 bits (max 31)
