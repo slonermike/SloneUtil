@@ -4,7 +4,7 @@ Miscellaneous helpers and utilities for making games with Unity Engine.
 ## License
 This code is freely available to you via the [WTFPL License](https://en.wikipedia.org/wiki/WTFPL)
 
-## SloneUtil
+## SloneUtil (Static Class)
 ### GetOrdinalString
 Get the ordinal string (1st, 2nd, 3rd, etc) associated with a number.
 ### IsAheadOf
@@ -31,14 +31,14 @@ Unpack a DateTime which was packed with PackDate.
 ### ParseEnum
 Convert a string to an enum.
 
-## WaitForButtonPress
+## WaitForButtonPress (MonoBehavior Class)
 Will set "expired" to false when either the time expires, or one of the buttons in the "buttons" array has been pressed.
 
 This is intended to be created by code.  Don't add this to your object in the inspector, use GameObject.AddComponent.
 
 If you're confused by this, you should just use SloneUtil.WaitForButtonDown and forget you ever saw this.
 
-## GamewidePrefabs
+## GamewidePrefabs (MonoBehavior Class)
 Create a list of prefabs that should be accessible from anywhere in the game.  Create a prefab from that object, and place it in each scene where the list should be accessible.
 Access the prefabs with: GameWidePrefabs.inst.GetPrefab("Prefab Name")
 
