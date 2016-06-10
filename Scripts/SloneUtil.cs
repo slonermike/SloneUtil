@@ -172,6 +172,17 @@ public static class SloneUtil
 		return from + ((to - from) * pct);
 	}
 
+	// Lerp a vector, continuing beyond 100%.
+	//
+	// from: starting value, returned if pct is 0.0
+	// to: ending value, returned if pct is 1.0
+	// pct: percentage (0.0-inf) along the continuum between from and to
+	// 
+	public static Vector2 LerpUnbounded(Vector3 from, Vector3 to, float pct)
+	{
+		return from + ((to - from) * pct);
+	}
+
 	const int MINUTE_MASK = 0x3f;		// 6 bits (max 63)
 	const int HOUR_MASK = 0x7c0;		// 5 bits (max 31)
 	const int DAY_MASK = 0xf800;		// 5 bits (max 31)
