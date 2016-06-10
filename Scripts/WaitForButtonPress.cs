@@ -12,6 +12,9 @@
  * If you don't know what that means, you should just use
  * SloneUtil.WaitForButtonDown and forget you ever saw this.
  * 
+ * 
+ * Do what you want.  Distributed with WTFPL license.
+ * 
  ************************************************************/
 
 using UnityEngine;

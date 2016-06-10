@@ -10,6 +10,9 @@
  * Access the prefabs with:
  * GameWidePrefabs.inst.GetPrefab("Prefab Name")
  * 
+ * 
+ * Do what you want.  Distributed with WTFPL license.
+ * 
  ************************************************************/
 
 using UnityEngine;

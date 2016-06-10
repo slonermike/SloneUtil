@@ -5,6 +5,8 @@
  * 
  * Generic utilities for making games in the Unity engine.
  * 
+ * Do what you want.  Distributed with WTFPL license.
+ * 
  ************************************************************/
 
 using System;
@@ -14,7 +16,7 @@ using System.Collections.Generic;
 
 public static class SloneUtil
 {
-	// Get the ordinal string (1st, 2nd, 3rd, etc) associated with a number.
+	// Get the ordinal string (1st, 2nd, 3rd, etc) associated with an integer.
 	//
 	// number: integer number to convert to an ordinal string.
 	//
@@ -54,7 +56,7 @@ public static class SloneUtil
 		return IsAheadOf (behind.transform, ahead.transform);
 	}
 
-	// Returns true pctChance percent of the time.
+	// Returns true pctChance percent of the time.  Returns false the rest of the time.
 	//
 	// pctChance: percentage (0.0-1.0) that this function will return true.
 	// 
