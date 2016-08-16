@@ -1,6 +1,6 @@
 ﻿/************************************************************
  * 
- *                     Music Player
+ *                     Mover Rotator
  *                 2016 Slonersoft Games
  * 
  * Continually rotates around each of the 3 axes according to
