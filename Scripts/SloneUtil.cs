@@ -38,22 +38,37 @@ public static class SloneUtil
 		}
 	}
 
-	// Returns true if ahead is ahead of behind (According to transform/fwd vector)
+	// Rotate the position around an arbitrary axis.
 	//
-	// behind: source object
-	// ahead: target object
+	// position: the position to do the rotating
+	// center: the center around which to rotate
+	// axis: the axis around which to rotate.
+	// angle: the angle of rotation in degrees.
+	//
+	public static Vector3 RotateAround(this Vector3 position, Vector3 center, Vector3 axis, float angle)
+	{
+		Quaternion rot = Quaternion.AngleAxis (angle, axis);
+		Vector3 dir = position - center;
+		return rot * dir;
+	}
+
+
+	// Returns true if xform is ahead of target (According to transform/fwd vector)
+	//
+	// xform: source transform
+	// target: target target
 	// 
-	public static bool IsAheadOf(Transform behind, Transform ahead) {
-		return Vector3.Dot (ahead.position - behind.position, behind.forward) > 0.0f;
+	public static bool IsAheadOf(this Transform xform, Transform target) {
+		return Vector3.Dot (xform.position - target.position, target.forward) > 0.0f;
 	}
 	
 	// Returns true if ahead is ahead of behind (According to transform/fwd vector)
 	//
-	// behind: source object
-	// ahead: target object
+	// obj: source object
+	// target: target object
 	// 
-	public static bool IsAheadOf(GameObject behind, GameObject ahead)  {
-		return IsAheadOf (behind.transform, ahead.transform);
+	public static bool IsAheadOf(this GameObject obj, GameObject target)  {
+		return obj.transform.IsAheadOf (target.transform);
 	}
 
 	// Returns true pctChance percent of the time.  Returns false the rest of the time.
@@ -70,7 +85,7 @@ public static class SloneUtil
 	// gObj: Gameobject to destroy.
 	// timeSec: Time in seconds after which to destroy it.
 	// 
-	public static IEnumerator DestroyAfterTime(GameObject gObj, float timeSec) {
+	public static IEnumerator DestroyAfterTime(this GameObject gObj, float timeSec) {
 		yield return new WaitForSeconds (timeSec);
 		GameObject.Destroy(gObj);
 	}

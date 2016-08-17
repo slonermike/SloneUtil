@@ -16,7 +16,7 @@ public class MoverRotator : MonoBehaviour {
 	[Tooltip("Each axis can have a different amount of rotation.")]
 	public Vector3 rotateVector;
 
-	[Tooltip("True to rotate locally, false to rotate globally.")]
+	[Tooltip("True to rotate around local axes, false to rotate around global axes.")]
 	public bool localRotation = false;
 
 	// Use this for initialization

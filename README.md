@@ -10,6 +10,8 @@ This code is freely available to you via the [WTFPL License](https://en.wikipedi
 ### SloneUtil (Static Class)
 * **GetOrdinalString**
   * Get the ordinal string (1st, 2nd, 3rd, etc) associated with a number.
+* **RotateAround**
+  * Rotate a position around a specified axis and center point.
 * **IsAheadOf**
   * Determine whether one object is ahead of another, according to their forward vectors and positions.
 * **RandChance**
