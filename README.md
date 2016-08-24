@@ -23,6 +23,8 @@ This code is freely available to you via the [WTFPL License](https://en.wikipedi
 * **AdvanceValue**
   * Returns a new value, advancing from the current value toward the goal at a specified rate.
   * Available for float, Vector2, Vector3 and Color.
+* **AdvanceAngle**
+  * Advances an angle at a specified speed, stopping once it reaches the specified angle.
 * **Lerp (color)**
   * Lerp from one color to another.
 * **LerpUnbounded**
