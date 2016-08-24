@@ -126,6 +126,25 @@ public static class SloneUtil
 		return val;
 	}
 
+	// Advances an angle at a specified speed, stopping once it reaches the specified angle.
+	//
+	// val: current angle (degrees)
+	// goal: goal angle (degrees)
+	// speed: speed of change (in degrees/second)
+	//
+	public static float AdvanceAngle( float val, float goal, float speed)
+	{
+		float diff = Mathf.DeltaAngle (val, goal);
+		float maxChange = speed * Time.deltaTime;
+
+		if (Mathf.Abs (diff) <= maxChange) {
+			val = goal;
+		} else {
+			val = val + (Mathf.Sign (diff) * maxChange);
+		}
+		return val;
+	}
+
 	// Moves a vector at a specified speed, stopping it once it reaches that value.
 	//
 	// val: current value
