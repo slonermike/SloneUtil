@@ -37,6 +37,8 @@ This code is freely available to you via the [WTFPL License](https://en.wikipedi
   * Can be accurately sorted.
 * **UnpackDate**
   * Unpack a DateTime which was packed with PackDate.
+* **ShuffleArray**
+  * Shuffle the array.  Can specify the number of times to shuffle.
 * **ParseEnum**
   * Convert a string to an enum.
 

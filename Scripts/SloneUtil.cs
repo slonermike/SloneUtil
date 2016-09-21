@@ -283,6 +283,24 @@ public static class SloneUtil
 		return new System.DateTime (year, month, day, hour, minute, 0);
 	}
 
+	// Shuffles an array (in place).
+	//
+	// shufflePasses: the number of times we should shuffle the array.
+	//
+	public static void ShuffleArray<T>(T[] array, int shufflePasses = 1)
+	{
+		for (int i = 0; i < shufflePasses; i++) {
+			for (int j = 0; j < array.Length; j++) {
+				int other = UnityEngine.Random.Range (0, array.Length - 1);
+				if (other != j) {
+					T o = array [j];
+					array [j] = array [other];
+					array [other] = o;
+				}
+			}
+		}
+	}
+
 	// Get an enum from the matching string.
 	//
 	// value: string value matching an enum value in T
