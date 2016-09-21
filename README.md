@@ -10,6 +10,8 @@ This code is freely available to you via the [WTFPL License](https://en.wikipedi
 ### SloneUtil (Static Class)
 * **GetOrdinalString**
   * Get the ordinal string (1st, 2nd, 3rd, etc) associated with a number.
+* **DistanceSquared**
+  * Get the squared distance between this vector and another.
 * **RotateAround**
   * Rotate a position around a specified axis and center point.
 * **IsAheadOf**

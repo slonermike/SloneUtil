@@ -38,6 +38,28 @@ public static class SloneUtil
 		}
 	}
 
+	// Get the squared distance between this point and another point.
+	//
+	// from: the starting point of the distance.
+	// to: the ending point of the distance.
+	//
+	public static float DistanceSquared(this Vector3 from, Vector3 to)
+	{
+		Vector3 diff = to - from;
+		return (diff.x * diff.x) + (diff.y * diff.y) + (diff.z * diff.z);
+	}
+
+	// Get the squared distance between this point and another point.
+	//
+	// from: the starting point of the distance.
+	// to: the ending point of the distance.
+	//
+	public static float DistanceSquared(this Vector2 from, Vector2 to)
+	{
+		Vector2 diff = to - from;
+		return (diff.x * diff.x) + (diff.y * diff.y);
+	}
+
 	// Rotate the position around an arbitrary axis.
 	//
 	// position: the position to do the rotating
