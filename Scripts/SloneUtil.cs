@@ -93,6 +93,46 @@ public static class SloneUtil
 		return obj.transform.IsAheadOf (target.transform);
 	}
 
+	// If the length of this vector is greater than the provided maximum, cap it
+	// at that length, but maintain the direction.
+	//
+	// srcVec (Vector3): vector to cap.
+	// maxLength (float): max length of the vector to be returned.
+	//
+	public static Vector3 CapMagnitude(this Vector3 srcVec, float maxLength)
+	{
+		if (maxLength < 0f) {
+			Debug.LogError ("CapMagnitude was passed a negative max length: " + maxLength);
+			return srcVec;
+		}
+
+		if (srcVec.sqrMagnitude <= (maxLength * maxLength)) {
+			return srcVec;
+		}
+
+		return srcVec.normalized * maxLength;
+	}
+
+	// If the length of this vector is greater than the provided maximum, cap it
+	// at that length, but maintain the direction.
+	//
+	// srcVec (Vector3): vector to cap.
+	// maxLength (float): max length of the vector to be returned.
+	//
+	public static Vector2 CapMagnitude(this Vector2 srcVec, float maxLength)
+	{
+		if (maxLength < 0f) {
+			Debug.LogError ("CapMagnitude was passed a negative max length: " + maxLength);
+			return srcVec;
+		}
+
+		if (srcVec.sqrMagnitude <= (maxLength * maxLength)) {
+			return srcVec;
+		}
+
+		return srcVec.normalized * maxLength;
+	}
+
 	// Returns true pctChance percent of the time.  Returns false the rest of the time.
 	//
 	// pctChance: percentage (0.0-1.0) that this function will return true.

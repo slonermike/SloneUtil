@@ -16,6 +16,8 @@ This code is freely available to you via the [WTFPL License](https://en.wikipedi
   * Rotate a position around a specified axis and center point.
 * **IsAheadOf**
   * Determine whether one object is ahead of another, according to their forward vectors and positions.
+* **CapMagnitude**
+  * If the length of this vector is greater than the provided maximum, cap it at that length, but maintain the direction.
 * **RandChance**
   * Returns true a specified percentage of the time.
 * **DestroyAfterTime**
