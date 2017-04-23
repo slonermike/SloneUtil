@@ -344,10 +344,32 @@ public static class SloneUtil
 	// Get an enum from the matching string.
 	//
 	// value: string value matching an enum value in T
-	// 
+	//
 	public static T ParseEnum<T>(string value)
 	{
 		return (T) Enum.Parse(typeof(T), value, true);
+	}
+
+	// Instantiate one object as a child of another.
+	//
+	// parentTransform: The transform to which the new object should be parented.
+	// prefab: the prefab from which the object should be created.
+	//
+	public static GameObject InstantiateChild(Transform parentTransform, GameObject prefab)
+	{
+		GameObject o = GameObject.Instantiate (prefab, parentTransform.position, parentTransform.rotation) as GameObject;
+		o.transform.SetParent (parentTransform);
+		return o;
+	}
+
+	// Instantiate one object as a child of another.
+	//
+	// parentObj: The object to which the new object should be parented.
+	// prefab: the prefab from which the object should be created.
+	//
+	public static GameObject InstantiateChild(GameObject parentObj, GameObject prefab)
+	{
+		return InstantiateChild (parentObj.transform, prefab);
 	}
 }
 

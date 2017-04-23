@@ -43,6 +43,28 @@ This code is freely available to you via the [WTFPL License](https://en.wikipedi
   * Shuffle the array.  Can specify the number of times to shuffle.
 * **ParseEnum**
   * Convert a string to an enum.
+* **InstantiateChild**
+  * Instantiate one object as a child of another.
+
+### SloneUtil2D (Static Class)
+* **GetCameraBounds**
+  * Get axis-aligned bounds of the camera.
+* **GetCameraSize**
+  * Get the width and height (x, y) of the camera.
+* **GetMouseWorldPos**
+  * Get the world position of the mouse.
+* **GetWorldPosFromScreen**
+  **Get a position in the world from a screen position.**
+* **IsPointOnscreen**
+  * Returns true if the specified point is on-screen.  False if off-screen.
+* **TurnToPoint**
+  * Call this every frame on a transform to turn it such that the right-vector will eventually face focalPoint.
+* **IsFacing**
+  * Checks to see if one object is facing another in 2 dimensions.
+* **RandPointInCone**
+  * Generates a random point within a 2d cone.
+* **RandDirection**
+  * Generates a random forward vector witin a specified range.
 
 ***
 
