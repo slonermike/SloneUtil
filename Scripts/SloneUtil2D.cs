@@ -230,4 +230,48 @@ public static class SloneUtil2D
 		float angleOut = UnityEngine.Random.Range(-halfAngle, halfAngle);
 		return Quaternion.AngleAxis (angleOut, Vector3.forward) * angleCenter;
 	}
+
+	// Get the world-space vector from this point to the nearest point onscreen that maintains
+	// the current distance from the camera.
+	//
+	// position: position to check.
+	// cam: camera on which to check (Deaults to main camera).
+	//
+	public static Vector2 GetVectorToOnscreen(Vector3 position, Camera cam = null)
+	{
+		if (cam == null) {
+			cam = Camera.main;
+		}
+
+		Vector3 toPosition = position - cam.transform.position;
+
+		float zDist = Vector3.Dot (toPosition, cam.transform.forward);
+
+		if (zDist < 0) {
+			Debug.LogError ("Cannot find distance offscreen for object behind camera.");
+			return Vector2.zero;
+		}
+
+		// Get the position relative to the camera.
+		float xDist = Vector3.Dot (toPosition, cam.transform.right);
+		float yDist = Vector3.Dot (toPosition, cam.transform.up);
+
+		Vector2 halfViewportSize = SloneUtil.GetViewportSizeAtDistance (zDist, cam) * 0.5f;
+
+		// Calculate the distance from each camera-relative direction (x and y) and multiply back into world space.
+		//
+		Vector2 returnX = Vector2.zero;
+		if (Mathf.Abs (xDist) > halfViewportSize.x) {
+			float xOffscreen = -1f * Mathf.Sign (xDist) * (Mathf.Abs (xDist) - halfViewportSize.x);
+			returnX = xOffscreen * cam.transform.right;
+		}
+
+		Vector2 returnY = Vector2.zero;
+		if (Mathf.Abs (yDist) > halfViewportSize.y) {
+			float yOffscreen = -1f * Mathf.Sign (yDist) * (Mathf.Abs (yDist) - halfViewportSize.y);
+			returnY = yOffscreen * cam.transform.up;
+		}
+
+		return returnX + returnY;
+	}
 }

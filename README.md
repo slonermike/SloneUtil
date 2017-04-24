@@ -45,6 +45,8 @@ This code is freely available to you via the [WTFPL License](https://en.wikipedi
   * Convert a string to an enum.
 * **InstantiateChild**
   * Instantiate one object as a child of another.
+* **GetViewportSizeAtDistance**
+  * Returns the world-space width and height of the screen at a specified distance in front of the camera.
 
 ### SloneUtil2D (Static Class)
 * **GetCameraBounds**
@@ -65,6 +67,8 @@ This code is freely available to you via the [WTFPL License](https://en.wikipedi
   * Generates a random point within a 2d cone.
 * **RandDirection**
   * Generates a random forward vector witin a specified range.
+* **GetVectorToOnscreen**
+  * Get the vector of the nearest path from this point to the nearest edge of the screen.
 
 ***
 

@@ -371,5 +371,26 @@ public static class SloneUtil
 	{
 		return InstantiateChild (parentObj.transform, prefab);
 	}
+
+	// Get the viewable width and height (x, y) at the specified distance from the camera.
+	//
+	// distance: units from camera at which we're checking the view size.
+	// cam: Camera on which to check the viewable size.  Defaults to main camera.
+	//
+	public static Vector2 GetViewportSizeAtDistance(float distance, Camera cam = null)
+	{
+		if (distance < 0f) {
+			Debug.LogError ("Cannot get viewport size at negative distance.");
+			return Vector2.zero;
+		}
+
+		if (cam == null) {
+			cam = Camera.main;
+		}
+
+		float height = 2.0f * distance * Mathf.Tan(cam.fieldOfView * 0.5f * Mathf.Deg2Rad);
+		float width = height * cam.aspect;
+		return new Vector2 (width, height);
+	}
 }
 
