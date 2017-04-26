@@ -53,9 +53,9 @@ public class ValueOscillator {
 		startTime = Time.time - (startPctOffset * wavelength);
 	}
 
-	// Get the current value of the oscillator.
+	// Evaluate the oscillator as a curve with output between 0 and 1.
 	//
-	public float Evaluate()
+	private float Evaluate01()
 	{
 		// Multiply by 2 so that 50% yields 1.0 and 100% is back to 0.0.
 		float pct = ((Time.time - startTime) / wavelength) * 2f;
@@ -72,5 +72,27 @@ public class ValueOscillator {
 			float leftoverPct = pct - ((float)baseNumber);
 			return downSwing ? 1.0f - leftoverPct : leftoverPct;
 		}
+	}
+
+	// Get the current value of the oscillator.
+	//
+	// minValue: the value at the start of the curve.
+	// maxValue: the value at the peak of the curve.
+	//
+	public float Evaluate(float minValue = 0f, float maxValue = 1f)
+	{
+		float pct = Evaluate01 ();
+		return Mathf.Lerp (minValue, maxValue, pct);
+	}
+
+	// Get the current value of the oscillator.
+	//
+	// minValue: the value at the start of the curve.
+	// maxValue: the value at the peak of the curve.
+	//
+	public Vector3 Evaluate(Vector3 minValue, Vector3 maxValue)
+	{
+		float pct = Evaluate01 ();
+		return Vector3.Lerp (minValue, maxValue, pct);
 	}
 }

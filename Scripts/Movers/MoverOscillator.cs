@@ -1,6 +1,6 @@
 ﻿/************************************************************
  * 
- *                    Scale Oscillator
+ *                    Mover Oscillator
  *                 2017 Slonersoft Games
  * 
  * Unity component for oscillating an object's position.
@@ -31,27 +31,33 @@ public class MoverOscillator : MonoBehaviour {
 	[Tooltip("True to oscillate in local space, false for global space.")]
 	public bool localMotion = true;
 
-	ValueOscillator[] oscillators;
+	[Tooltip("True to rotate in both directions, with the start position as the center.")]
+	public bool biDirectional = true;
+
+	VectorOscillator oscillator;
 	private Vector3 startPos;
-	private Vector3 endPos;
 
 	// Use this for initialization
 	void Start () {
-		oscillators = new ValueOscillator[3];
-		oscillators [0] = new ValueOscillator (wavelength.x, startOffsetPct.x, curveType);
-		oscillators [1] = new ValueOscillator (wavelength.y, startOffsetPct.y, curveType);
-		oscillators [2] = new ValueOscillator (wavelength.z, startOffsetPct.z, curveType);
+
+		// Bi-directionals start in the middle of the upswing.
+		if (biDirectional) {
+			startOffsetPct += Vector3.one * 0.25f;
+		}
+
+		oscillator = new VectorOscillator (wavelength, startOffsetPct, curveType);
 		startPos = localMotion ? transform.localPosition : transform.position;
-		endPos = startPos + magnitude;
 	}
 
 	// Update is called once per frame
 	void Update () {
-		float x = SloneUtil.LerpUnbounded (startPos.x, endPos.x, oscillators [0].Evaluate ());
-		float y = SloneUtil.LerpUnbounded (startPos.y, endPos.y, oscillators [1].Evaluate ());
-		float z = SloneUtil.LerpUnbounded (startPos.z, endPos.z, oscillators [2].Evaluate ());
+		Vector3 newPos;
 
-		Vector3 newPos = new Vector3 (x, y, z);
+		if (biDirectional) {
+			newPos = oscillator.Evaluate (startPos - magnitude, startPos + magnitude);
+		} else {
+			newPos = oscillator.Evaluate (startPos, startPos + magnitude);
+		}
 
 		if (localMotion) {
 			transform.localPosition = newPos;

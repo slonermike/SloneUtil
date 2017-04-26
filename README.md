@@ -6,8 +6,8 @@ This code is freely available to you via the [WTFPL License](https://en.wikipedi
 
 ***
 
-## Classes
-### SloneUtil (Static Class)
+## Static Classes
+### SloneUtil
 * **GetOrdinalString**
   * Get the ordinal string (1st, 2nd, 3rd, etc) associated with a number.
 * **DistanceSquared**
@@ -48,7 +48,7 @@ This code is freely available to you via the [WTFPL License](https://en.wikipedi
 * **GetViewportSizeAtDistance**
   * Returns the world-space width and height of the screen at a specified distance in front of the camera.
 
-### SloneUtil2D (Static Class)
+### SloneUtil2D
 * **GetCameraBounds**
   * Get axis-aligned bounds of the camera.
 * **GetCameraSize**
@@ -72,16 +72,48 @@ This code is freely available to you via the [WTFPL License](https://en.wikipedi
 
 ***
 
-### WaitForButtonPress (MonoBehavior Class)
-* Will set "expired" to false when either the time expires, or one of the buttons in the "buttons" array has been pressed.
+## MonoBehavior Classes
+
+### DestroyAfterTime
+* Cleans up the object after a specified period of time.
+
+### DetachFromParent
+* Detaches the object from its parent immediately upon spawning.
+* Allows objects to live on even if their parents will be destroyed after a time.
+
+### WaitForButtonPress
+* Will set "expired" to true when either the time expires, or one of the buttons in the "buttons" array has been pressed.
 * This is intended to be created by code.  Don't add this to your object in the inspector, use GameObject.AddComponent.
 * If you're confused by this, you should just use SloneUtil.WaitForButtonDown and forget you ever saw this.
 
 ***
 
-### GamewidePrefabs (MonoBehavior Class)
+## MoverOscillator
+* Oscillates an object's position back and forth.
+
+## MoverRotateOscillator
+* Oscillates an object's rotation back and forth.
+
+## MoverScaleOscillator
+* Oscillates an object's scale back and forth.
+
+## MoverRotator
+* Rotates an object at a specified speed around each axis.
+
+***
+
+### GamewidePrefabs
 Create a list of prefabs that should be accessible from anywhere in the game.  Create a prefab from that object, and place it in each scene where the list should be accessible.
 Access the prefabs with: GameWidePrefabs.inst.GetPrefab("Prefab Name")
 
 * **GetPrefab**
   * Retrieve a gamewide prefab from the list.
+
+## Other Classes
+
+### ValueOscillator
+Oscillates a value back and forth at a specified time interval.
+
+### VectorOscillator
+Oscillates a set of 3 values back and fort on independent timelines.
+

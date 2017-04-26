@@ -16,31 +16,36 @@ public class MoverRotateOscillator : MonoBehaviour {
 	[Tooltip("Magnitude of oscillation around each axis.")]
 	public Vector3 magnitude;
 
-	[Tooltip("Frequency of oscillation around each axis.")]
-	public Vector3 frequency;
+	[Tooltip("Time it takes to get from here to there and back.")]
+	public Vector3 wavelength = Vector3.one;
 
-	[Tooltip("Time offset for starting each axis of oscillation.")]
-	public Vector3 startOffset;
+	[Tooltip("Percentage offset for starting each axis of oscillation.")]
+	public Vector3 startPctOffset;
+
+	[Tooltip("Type of curve to use for the oscillation.")]
+	public OscillationType curveType = OscillationType.LINEAR;
+
+	[Tooltip("True to oscillate in both directions with the start point as the center.")]
+	public bool biDirectional = true;
 
 	Vector3 startRotation;
-	float startTime;
+	VectorOscillator oscillator;
 
 	// Use this for initialization
 	void Start () {
-		startTime = Time.time;
+		if (biDirectional) {
+			startPctOffset += Vector3.one * 0.25f;
+		}
+		oscillator = new VectorOscillator (wavelength, startPctOffset, curveType);
 		startRotation = transform.localRotation.eulerAngles;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		float time = startTime - Time.time;
-
-		float xOffset = magnitude.x * Mathf.Sin ((time + startOffset.x) * frequency.x);
-		float yOffset = magnitude.y * Mathf.Sin ((time + startOffset.y) * frequency.y);
-		float zOffset = magnitude.z * Mathf.Sin ((time + startOffset.z) * frequency.z);
-
-		Vector3 offset = new Vector3 (xOffset, yOffset, zOffset);
-
-		transform.localEulerAngles = startRotation + offset;
+		if (biDirectional) {
+			transform.localEulerAngles = oscillator.Evaluate (startRotation - magnitude, startRotation + magnitude);
+		} else {
+			transform.localEulerAngles = oscillator.Evaluate (startRotation, startRotation + magnitude);
+		}
 	}
 }
