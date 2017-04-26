@@ -276,9 +276,61 @@ public static class SloneUtil
 	// to: ending value, returned if pct is 1.0
 	// pct: percentage (0.0-inf) along the continuum between from and to
 	// 
-	public static Vector2 LerpUnbounded(Vector3 from, Vector3 to, float pct)
+	public static Vector3 LerpUnbounded(Vector3 from, Vector3 to, float pct)
 	{
 		return from + ((to - from) * pct);
+	}
+
+	// Smooth a value between 0 and 1 to be used for smooth lerping.
+	//
+	// pct: Linear percentage.
+	// cap01: False to cap between 0 and 1, True to oscillate values beyond range of 0-1.
+	//
+	private static float SmoothValue(float pct, bool oscillate = false)
+	{
+		if (!oscillate) {
+			pct = Mathf.Clamp01 (pct);
+		}
+		return (-1f * Mathf.Cos(pct * Mathf.PI)) + 1f;
+	}
+
+	// Lerp from one value to another using a smoothed lerp to ease departure and approach.
+	//
+	// from: starting value, returned if pct is 0.0
+	// to: ending value, returned if pct is 1.0
+	// pct: percentage (0.0-1.0) along the continuum between from and to
+	// oscillate: True if values beyond 0-1 should oscillate back to where they started.
+	//
+	public static float LerpSmooth(float from, float to, float pct, bool oscillate = false)
+	{
+		float smoothed = SmoothValue (pct, oscillate);
+		return SloneUtil.LerpUnbounded (from, to, smoothed);
+	}
+
+	// Lerp from one vector to another using a smoothed lerp to ease departure and approach.
+	//
+	// from: starting value, returned if pct is 0.0
+	// to: ending value, returned if pct is 1.0
+	// pct: percentage (0.0-1.0) along the continuum between from and to
+	// oscillate: True if values beyond 0-1 should oscillate back to where they started.
+	//
+	public static Vector2 LerpSmooth(Vector2 from, Vector2 to, float pct, bool oscillate = false)
+	{
+		float smoothed = SmoothValue (pct, oscillate);
+		return SloneUtil.LerpUnbounded (from, to, smoothed);
+	}
+
+	// Lerp from one vector to another using a smoothed lerp to ease departure and approach.
+	//
+	// from: starting value, returned if pct is 0.0
+	// to: ending value, returned if pct is 1.0
+	// pct: percentage (0.0-1.0) along the continuum between from and to
+	// oscillate: True if values beyond 0-1 should oscillate back to where they started.
+	//
+	public static Vector3 LerpSmooth(Vector3 from, Vector3 to, float pct, bool oscillate = false)
+	{
+		float smoothed = SmoothValue (pct, oscillate);
+		return SloneUtil.LerpUnbounded (from, to, smoothed);
 	}
 
 	const int MINUTE_MASK = 0x3f;		// 6 bits (max 63)
