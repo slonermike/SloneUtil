@@ -10,8 +10,8 @@
 using UnityEngine;
 using System.Collections;
 
-public class MoverScaleOscillator : MonoBehaviour {
-	
+public class MoverScaleOscillator : Mover {
+
 	[Tooltip("Time in seconds to make a full oscillation.")]
 	public Vector3 wavelength = Vector3.one;
 

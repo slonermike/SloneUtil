@@ -11,7 +11,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class MoverRotator : MonoBehaviour {
+public class MoverRotator : Mover {
 
 	[Tooltip("Each axis can have a different amount of rotation.")]
 	public Vector3 rotateVector;

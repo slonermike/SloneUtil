@@ -16,6 +16,17 @@ using System.Collections.Generic;
 
 public static class SloneUtil
 {
+	// If you need a temporary game object, use this one, so we don't keep destroying and re-creating them.
+	private static GameObject _tempObject;
+	public static GameObject tempObject {
+		get {
+			if (_tempObject == null) {
+				_tempObject = new GameObject ("SloneUtil Helper");
+			}
+			return _tempObject;
+		}
+	}
+
 	// Get the ordinal string (1st, 2nd, 3rd, etc) associated with an integer.
 	//
 	// number: integer number to convert to an ordinal string.
@@ -80,8 +91,11 @@ public static class SloneUtil
 	// xform: source transform
 	// target: target target
 	// 
-	public static bool IsAheadOf(this Transform xform, Transform target) {
-		return Vector3.Dot (xform.position - target.position, target.forward) > 0.0f;
+	public static bool IsAheadOf(this Transform xform, Transform target, float maxAngle = 90f) {
+		float radians = maxAngle * Mathf.Deg2Rad;
+		float cosAngle = Mathf.Cos (radians);
+		float dot = Vector3.Dot ((xform.position - target.position).normalized, target.forward.normalized);
+		return dot >= cosAngle;
 	}
 	
 	// Returns true if ahead is ahead of behind (According to transform/fwd vector)
@@ -142,14 +156,32 @@ public static class SloneUtil
 		return UnityEngine.Random.Range (0.0f, 1.0f) < pctChance;
 	}
 
+	// Generates a random forward vector witin a specified range.
+	//
+	// angleCenter: The vector at the center of all possible output.
+	// angleRange: The maximum range off center of the output.
+	//
+	public static Vector3 RandDirection(Vector3 angleCenter, float angleRange = 360.0f)
+	{
+		if (angleCenter.sqrMagnitude == 0f) {
+			angleCenter = Vector3.forward;
+		}
+
+		float halfAngle = angleRange * 0.5f;
+		angleCenter = Quaternion.AngleAxis (UnityEngine.Random.Range(-halfAngle, halfAngle), Vector3.forward) * angleCenter;
+		angleCenter = Quaternion.AngleAxis (UnityEngine.Random.Range(-halfAngle, halfAngle), Vector3.right) * angleCenter;
+
+		return angleCenter;
+	}
+
 	// Destroys a GameObject after a delay.
 	//
 	// gObj: Gameobject to destroy.
 	// timeSec: Time in seconds after which to destroy it.
 	// 
-	public static IEnumerator DestroyAfterTime(this GameObject gObj, float timeSec) {
-		yield return new WaitForSeconds (timeSec);
-		GameObject.Destroy(gObj);
+	public static void DestroyAfterTime(this GameObject gObj, float timeSec) {
+		DestroyAfterTime dat = gObj.AddComponent<DestroyAfterTime> ();
+		dat.lifetime = timeSec;
 	}
 
 	// Waits for button(s) press.  Has optional timeout.
@@ -205,6 +237,20 @@ public static class SloneUtil
 			val = val + (Mathf.Sign (diff) * maxChange);
 		}
 		return val;
+	}
+
+	// Lerps from one set of Euler angles to another.
+	//
+	// a: The start angles.
+	// b: The end angles.
+	// pct: The position [0,1] along the lerp.
+	//
+	public static Vector3 LerpEulerAngles( Vector3 a, Vector3 b, float pct)
+	{
+		return new Vector3 (
+			Mathf.LerpAngle (a.x, b.x, pct),
+			Mathf.LerpAngle (a.y, b.y, pct),
+			Mathf.LerpAngle (a.z, b.z, pct));
 	}
 
 	// Moves a vector at a specified speed, stopping it once it reaches that value.
@@ -445,6 +491,162 @@ public static class SloneUtil
 		float height = 2.0f * distance * Mathf.Tan(cam.fieldOfView * 0.5f * Mathf.Deg2Rad);
 		float width = height * cam.aspect;
 		return new Vector2 (width, height);
+	}
+
+	// Projects a point onto a different camera plane.
+	//
+	// fromPoint: the point to project.
+	// toDistance: the distance from the camera to the new camera plane.
+	// cam: the camera whose planes we're using (defaults to Camera.main).
+	//
+	public static Vector3 ProjectPointToNewCameraPlane(Vector3 fromPoint, float toDistance, Camera cam = null)
+	{
+		if (cam == null) {
+			cam = Camera.main;
+		}
+
+		float projectionScalar = GetCameraPlaneProjectionScalar (fromPoint, toDistance, cam);
+		Vector3 toPoint = fromPoint - cam.transform.position;
+
+		Vector3 rVec = cam.transform.right.normalized;
+		Vector3 uVec = cam.transform.up.normalized;
+		Vector3 fVec = cam.transform.forward.normalized;
+
+		float x = Vector3.Dot (toPoint, rVec) * projectionScalar;
+		float y = Vector3.Dot (toPoint, uVec) * projectionScalar;
+
+		return cam.transform.position + (x * rVec) + (y * uVec) + (toDistance * fVec);
+	}
+
+	// Gets the multiplier used to project a point or scale from one camera distance plane to another.
+	//
+	// fromPoint: The point being projected.
+	// toDistance: The distance from the camera onto which we're projecting.
+	// cam: the camera whose planes we're using (defaults to Camera.main).
+	//
+	public static float GetCameraPlaneProjectionScalar(Vector3 fromPoint, float toDistance, Camera cam = null)
+	{
+		if (cam == null) {
+			cam = Camera.main;
+		}
+
+		// Project it onto the forward vector so that we're using the distance to the plane, rather
+		// than the distance to the point.
+		//
+		float fromDistance = Vector3.Dot ((fromPoint - cam.transform.position), cam.transform.forward.normalized);
+
+		if (fromDistance == 0f) {
+			return 0f;
+		}
+
+		return toDistance / fromDistance;
+	}
+
+	// Returns true if the point is on screen.  Has optional variable to allow an overlap
+	// to detect things that are almost on screen.
+	//
+	// pt: The point to check whether it's onscreen.
+	// beyondPct: The percentage beyond the edge of the screen that we still consider onscreen.
+	//
+	public static bool IsPointOnscreen(this Camera cam, Vector3 pt, float beyondPct = 0f)
+	{
+		Vector3 screenPoint = cam.WorldToViewportPoint(pt);
+
+		// Check x and y.
+		for (int i = 0; i < 2; i++) {
+			if (screenPoint [i] > 1f + beyondPct || screenPoint [i] < -beyondPct) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	// Get the last item in a list.
+	//
+	public static T Last<T>(this List<T> list)
+	{
+		if (list.Count == 0) {
+			return default(T);
+		}
+
+		return list [list.Count - 1];
+	}
+
+	// Creates a new component on the object copied from original.
+	//
+	// original: the original component.
+	// destination: the object onto which we're instantiating the component.
+	//
+	// returns: new component.
+	//
+	public static T CopyNewComponent<T>(T original, GameObject destination) where T : Component
+	{
+		System.Type type = original.GetType();
+		Component copy = destination.AddComponent(type);
+		System.Reflection.FieldInfo[] fields = type.GetFields();
+		foreach (System.Reflection.FieldInfo field in fields)
+		{
+			field.SetValue(copy, field.GetValue(original));
+		}
+		return copy as T;
+	}
+
+	// Moves the object to the camera such that it's lined up by the refTransform being where
+	// the camera is.
+	//
+	// t: The transform to move.
+	// refTransform: the transform that we use to align to the camera.
+	// cam: The camera to use.  Camera.main by default.
+	//
+	public static void MoveToCameraByReference(Transform t, Transform refTransform, Camera cam = null)
+	{
+		if (cam == null) {
+			cam = Camera.main;
+		}
+
+		// This is kind of a dumb way to do this, but it makes all the
+		// painful math go away.
+		Transform prevParent = t.parent;
+
+		tempObject.transform.position = refTransform.position;
+		tempObject.transform.rotation = refTransform.rotation;
+
+		t.SetParent (tempObject.transform);
+		tempObject.transform.position = cam.transform.position;
+		tempObject.transform.rotation = cam.transform.rotation;
+
+		t.SetParent (prevParent);
+	}
+
+	// Check if two values are equal with a tolerance level.
+	//
+	// val1: first value
+	// val2: second value
+	// epsilon: maximum acceptable difference between the two.
+	//
+	public static bool Equals(float val1, float val2, float epsilon)
+	{
+		return Mathf.Abs (val2 - val1) < epsilon;
+	}
+		
+	/// <summary>
+	/// Take a grayscale color and add hue and saturation from a full-color to it.
+	/// </summary>
+	/// <returns>fullColor with alpha and brightness from bwColor.</returns>
+	/// <param name="bwColor">Grayscale color from which to get alpha and brightness.</param>
+	/// <param name="fullColor">Full color from which to get hue and saturation.</param>
+	public static Color ConvertColorFromGrayscale(Color bwColor, Color fullColor)
+	{
+		float fullH, fullS, fullV;
+		Color.RGBToHSV (fullColor, out fullH, out fullS, out fullV);
+
+		float h, s, v;
+		Color.RGBToHSV (bwColor, out h, out s, out v);
+		Color newColor = Color.HSVToRGB (fullH, fullS, v);
+		newColor.a = bwColor.a;
+
+		return newColor;
 	}
 }
 

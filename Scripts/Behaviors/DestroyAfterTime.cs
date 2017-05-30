@@ -17,8 +17,14 @@ public class DestroyAfterTime : MonoBehaviour {
 
 	public float lifetime = 1.0f;
 
+	private IEnumerator DestroyAfterTime_coroutine()
+	{
+		yield return new WaitForSeconds (lifetime);
+		GameObject.Destroy (gameObject);
+	}
+
 	// Use this for initialization
 	void Start () {
-		StartCoroutine ( SloneUtil.DestroyAfterTime(gameObject, lifetime));
+		StartCoroutine ( DestroyAfterTime_coroutine());
 	}
 }

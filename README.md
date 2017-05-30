@@ -47,6 +47,22 @@ This code is freely available to you via the [WTFPL License](https://en.wikipedi
   * Instantiate one object as a child of another.
 * **GetViewportSizeAtDistance**
   * Returns the world-space width and height of the screen at a specified distance in front of the camera.
+* **RandDirection**
+  * Takes a angleCenter and angleRange, and rotates angleCenter a random amount, up to the specified angleRange.
+* **LerpEulerValues**
+  * Performs a Mathf.LerpAngle on each component of a vector.
+* **ProjectPointToNewCameraPlane**
+  * Projects a point from an original position onto a new camera plane, such that it remains in line according to the view frustum.  Useful for 2.5d games where collision of objects at different z depths needs to line up visually.
+* **IsPointOnScreen**
+  * Returns true if the point is onscreen, false if not.  Takes a "beyondPct" which allows a check to see if it's at least x% beyond/within the bounds of the screen.
+* **CopyNewComponent**
+  * Takes a component and creates a new copy of it on the specified game object.
+* **MoveToCameraByReference**
+  * Places an object relative to the camera by a reference point.
+* **Equals**
+  * Check the equality of two floats within a degree of tolerance.
+* **ConvertColorFromGrayScale**
+  * Take a grayscale color and add hue and saturation from a full-color value to it.
 
 ### SloneUtil2D
 * **GetCameraBounds**
@@ -100,11 +116,20 @@ This code is freely available to you via the [WTFPL License](https://en.wikipedi
 ## MoverRotator
 * Rotates an object at a specified speed around each axis.
 
+## MoverScaler
+* Scales an object over time.
+
+## MoverTranslator
+* Moves the object at a specified rate along each axis.
+
+## UVScroller
+* Scrolls the UVs on a mesh.  Creates a copy of the material so it doesn't alter the original.
+
 ***
 
-### GamewidePrefabs
+### AssetPool
 Create a list of prefabs that should be accessible from anywhere in the game.  Create a prefab from that object, and place it in each scene where the list should be accessible.
-Access the prefabs with: GameWidePrefabs.inst.GetPrefab("Prefab Name")
+Access the prefabs with: AssetPool.pools[AssetPoolType].GetPrefab("Prefab Name")
 
 * **GetPrefab**
   * Retrieve a gamewide prefab from the list.
@@ -116,4 +141,7 @@ Oscillates a value back and forth at a specified time interval.
 
 ### VectorOscillator
 Oscillates a set of 3 values back and fort on independent timelines.
+
+### Spline
+Simple spline implementation for smooth curve evaluation.
 

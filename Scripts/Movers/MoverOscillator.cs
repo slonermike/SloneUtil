@@ -14,7 +14,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class MoverOscillator : MonoBehaviour {
+public class MoverOscillator : Mover {
 
 	[Tooltip("Magnitude of oscillation along each axis.")]
 	public Vector3 magnitude;
