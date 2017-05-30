@@ -142,6 +142,3 @@ Oscillates a value back and forth at a specified time interval.
 ### VectorOscillator
 Oscillates a set of 3 values back and fort on independent timelines.
 
-### Spline
-Simple spline implementation for smooth curve evaluation.
-
