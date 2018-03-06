@@ -10,20 +10,37 @@ using UnityEngine;
 
 public class UVScroller : MonoBehaviour {
 
+	public enum UVScrollerType
+	{
+		MESH,
+		LINE_RENDERER
+	}
+
 	// Starting scroll offset.
 	public Vector2 startOffset;
 
 	// Speed (per second) of the scroll in each direction.
 	public Vector2 scrollSpeed;
 
+	public UVScrollerType type = UVScrollerType.MESH;
+
 	Material material = null;
 
 	// Use this for initialization
 	void Start () {
-		MeshRenderer mesh = GetComponent<MeshRenderer> ();
-		if (mesh) {
-			material = Material.Instantiate (mesh.material);
-			mesh.material = material;
+
+		if (type == UVScrollerType.MESH) {
+			MeshRenderer mesh = GetComponent<MeshRenderer> ();
+			if (mesh) {
+				material = Material.Instantiate (mesh.material);
+				mesh.material = material;
+			}
+		} else if (type == UVScrollerType.LINE_RENDERER) {
+			LineRenderer lr = GetComponent<LineRenderer> ();
+			if (lr) {
+				material = Material.Instantiate (lr.material);
+				lr.material = material;
+			}
 		}
 
 		if (!material) {

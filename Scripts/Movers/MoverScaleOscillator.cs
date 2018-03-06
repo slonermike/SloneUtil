@@ -32,7 +32,7 @@ public class MoverScaleOscillator : Mover {
 
 	// Use this for initialization
 	void Start () {
-		originalScale = transform.localScale;
+		originalScale = moverTransform.localScale;
 		oscillator = new VectorOscillator (wavelength, startAnimPct, curveType, randomizeStart);
 	}
 	
@@ -40,6 +40,6 @@ public class MoverScaleOscillator : Mover {
 	void Update () {
 		Vector3 targetScale = originalScale;
 		targetScale.Scale (magnitude);
-		transform.localScale = oscillator.Evaluate (originalScale, targetScale);
+		moverTransform.localScale = oscillator.Evaluate (originalScale, targetScale);
 	}
 }

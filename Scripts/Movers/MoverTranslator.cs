@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoverTranslator : MonoBehaviour {
+public class MoverTranslator : Mover {
 
 	// Speed in units per second.
 	public Vector3 velocity = Vector3.zero;
@@ -18,9 +18,9 @@ public class MoverTranslator : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (useLocalAxes) {
-			transform.position += (velocity.x * transform.right) + (velocity.y * transform.up) + (velocity.z * transform.forward) * Time.deltaTime;
+			moverTransform.position += (velocity.x * moverTransform.right) + (velocity.y * moverTransform.up) + (velocity.z * moverTransform.forward) * Time.deltaTime;
 		} else {
-			transform.position += velocity * Time.deltaTime;
+			moverTransform.position += velocity * Time.deltaTime;
 		}
 	}
 }

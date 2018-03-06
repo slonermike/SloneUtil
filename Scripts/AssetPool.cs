@@ -78,7 +78,8 @@ public class AssetPool : MonoBehaviour {
 	void OnDestroy()
 	{
 		// Remove this pool from the master dictionary.
-		_pools.Remove (type);
+        if (_pools != null)
+		    _pools.Remove (type);
 	}
 
 	// Retrieve a gamewide prefab from the list.

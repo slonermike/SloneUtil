@@ -46,7 +46,7 @@ public class MoverOscillator : Mover {
 		}
 
 		oscillator = new VectorOscillator (wavelength, startOffsetPct, curveType);
-		startPos = localMotion ? transform.localPosition : transform.position;
+		startPos = localMotion ? moverTransform.localPosition : moverTransform.position;
 	}
 
 	// Update is called once per frame
@@ -60,9 +60,9 @@ public class MoverOscillator : Mover {
 		}
 
 		if (localMotion) {
-			transform.localPosition = newPos;
+			moverTransform.localPosition = newPos;
 		} else {
-			transform.position = newPos;
+			moverTransform.position = newPos;
 		}
 	}
 }

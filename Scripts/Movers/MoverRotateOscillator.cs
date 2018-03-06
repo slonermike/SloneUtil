@@ -37,15 +37,15 @@ public class MoverRotateOscillator : Mover {
 			startPctOffset += Vector3.one * 0.25f;
 		}
 		oscillator = new VectorOscillator (wavelength, startPctOffset, curveType);
-		startRotation = transform.localRotation.eulerAngles;
+		startRotation = moverTransform.localRotation.eulerAngles;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if (biDirectional) {
-			transform.localEulerAngles = oscillator.Evaluate (startRotation - magnitude, startRotation + magnitude);
+			moverTransform.localEulerAngles = oscillator.Evaluate (startRotation - magnitude, startRotation + magnitude);
 		} else {
-			transform.localEulerAngles = oscillator.Evaluate (startRotation, startRotation + magnitude);
+			moverTransform.localEulerAngles = oscillator.Evaluate (startRotation, startRotation + magnitude);
 		}
 	}
 }

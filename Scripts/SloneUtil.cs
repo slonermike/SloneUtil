@@ -1,12 +1,12 @@
 /************************************************************
- * 
+ *
  *                      Slone Utils
  *                 2016 Slonersoft Games
- * 
+ *
  * Generic utilities for making games in the Unity engine.
- * 
+ *
  * Do what you want.  Distributed with WTFPL license.
- * 
+ *
  ************************************************************/
 
 using System;
@@ -16,7 +16,9 @@ using System.Collections.Generic;
 
 public static class SloneUtil
 {
-	// If you need a temporary game object, use this one, so we don't keep destroying and re-creating them.
+	/// <summary>
+	/// If you need a temporary game object, use this one, so we don't keep destroying and re-creating them.
+	/// </summary>
 	private static GameObject _tempObject;
 	public static GameObject tempObject {
 		get {
@@ -27,10 +29,41 @@ public static class SloneUtil
 		}
 	}
 
-	// Get the ordinal string (1st, 2nd, 3rd, etc) associated with an integer.
-	//
-	// number: integer number to convert to an ordinal string.
-	//
+	/// <summary>
+	/// Pre-made animation curve set to ease in and out.
+	/// </summary>
+	private static AnimationCurve _easeInOut;
+	public static AnimationCurve easeInOut {
+		get {
+			if (_easeInOut == null) {
+				_easeInOut = AnimationCurve.EaseInOut (0f, 0f, 1f, 1f);
+				_easeInOut.postWrapMode = WrapMode.Once;
+				_easeInOut.preWrapMode = WrapMode.Once;
+			}
+			return _easeInOut;
+		}
+	}
+
+	/// <summary>
+	/// Pre-made animation curve set to oscillate smoothly.
+	/// </summary>
+	private static AnimationCurve _easeOscillate;
+	public static AnimationCurve easeOscillate {
+		get {
+			if (_easeOscillate == null) {
+				_easeOscillate = AnimationCurve.EaseInOut (0f, 0f, 0.5f, 1f);
+				_easeOscillate.postWrapMode = WrapMode.PingPong;
+				_easeOscillate.preWrapMode = WrapMode.PingPong;
+			}
+			return _easeOscillate;
+		}
+	}
+
+	/// <summary>
+	/// Get the ordinal string (1st, 2nd, 3rd, etc) associated with an integer.
+	/// </summary>
+	/// <param name="number">integer number to convert to an ordinal string.</param>
+	/// <returns>Ordinal string (1st, 2nd, 3rd, etc)</returns>
 	public static string GetOrdinalString(int number)
 	{
 		int lastDigit = number % 10;
@@ -49,35 +82,38 @@ public static class SloneUtil
 		}
 	}
 
-	// Get the squared distance between this point and another point.
-	//
-	// from: the starting point of the distance.
-	// to: the ending point of the distance.
-	//
+	/// <summary>
+	/// Get the squared distance between this point and another point.
+	/// </summary>
+	/// <param name="from">the starting point of the distance.</param>
+	/// <param name="to">the ending point of the distance.</param>
+	/// <returns>Distance (in units) between points, squared.</returns>
 	public static float DistanceSquared(this Vector3 from, Vector3 to)
 	{
 		Vector3 diff = to - from;
 		return (diff.x * diff.x) + (diff.y * diff.y) + (diff.z * diff.z);
 	}
 
-	// Get the squared distance between this point and another point.
-	//
-	// from: the starting point of the distance.
-	// to: the ending point of the distance.
-	//
+	/// <summary>
+	/// Get the squared distance between this point and another point.
+	/// </summary>
+	/// <param name="from">the starting point of the distance.</param>
+	/// <param name="to">the ending point of the distance.</param>
+	/// <returns>Distance (in units) between points, squared.</returns>
 	public static float DistanceSquared(this Vector2 from, Vector2 to)
 	{
 		Vector2 diff = to - from;
 		return (diff.x * diff.x) + (diff.y * diff.y);
 	}
 
-	// Rotate the position around an arbitrary axis.
-	//
-	// position: the position to do the rotating
-	// center: the center around which to rotate
-	// axis: the axis around which to rotate.
-	// angle: the angle of rotation in degrees.
-	//
+	/// <summary>
+	/// Rotate the position around an arbitrary axis.
+	/// </summary>
+	/// <param name="position">the position to do the rotating</param>
+	/// <param name="center">the center around which to rotate</param>
+	/// <param name="axis">the axis around which to rotate.</param>
+	/// <param name="angle">the angle of rotation in degrees.</param>
+	/// <returns></returns>
 	public static Vector3 RotateAround(this Vector3 position, Vector3 center, Vector3 axis, float angle)
 	{
 		Quaternion rot = Quaternion.AngleAxis (angle, axis);
@@ -85,34 +121,37 @@ public static class SloneUtil
 		return rot * dir;
 	}
 
-
-	// Returns true if xform is ahead of target (According to transform/fwd vector)
-	//
-	// xform: source transform
-	// target: target target
-	// 
+	/// <summary>
+	/// Returns true if xform is ahead of target (According to transform/fwd vector)
+	/// </summary>
+	/// <param name="xform">source transform</param>
+	/// <param name="target">Target transform.</param>
+	/// <param name="maxAngle">Maximum angle difference from centered.</param>
+	/// <returns>True if it's within the threshold, false otherwise.</returns>
 	public static bool IsAheadOf(this Transform xform, Transform target, float maxAngle = 90f) {
 		float radians = maxAngle * Mathf.Deg2Rad;
 		float cosAngle = Mathf.Cos (radians);
 		float dot = Vector3.Dot ((xform.position - target.position).normalized, target.forward.normalized);
 		return dot >= cosAngle;
 	}
-	
-	// Returns true if ahead is ahead of behind (According to transform/fwd vector)
-	//
-	// obj: source object
-	// target: target object
-	// 
+
+	/// <summary>
+	/// Returns true if ahead is ahead of behind (According to transform/fwd vector)
+	/// </summary>
+	/// <param name="obj">source object</param>
+	/// <param name="target">target object</param>
+	/// <returns>True if it's within the threshold, false otherwise.</returns>
 	public static bool IsAheadOf(this GameObject obj, GameObject target)  {
 		return obj.transform.IsAheadOf (target.transform);
 	}
 
-	// If the length of this vector is greater than the provided maximum, cap it
-	// at that length, but maintain the direction.
-	//
-	// srcVec (Vector3): vector to cap.
-	// maxLength (float): max length of the vector to be returned.
-	//
+	/// <summary>
+	/// If the length of this vector is greater than the provided maximum, cap it
+	/// at that length, but maintain the direction.
+	/// </summary>
+	/// <param name="srcVec">Vector to cap length.</param>
+	/// <param name="maxLength">Length to cap the vector to.</param>
+	/// <returns>Vector capped to length of maxLength.</returns>
 	public static Vector3 CapMagnitude(this Vector3 srcVec, float maxLength)
 	{
 		if (maxLength < 0f) {
@@ -127,12 +166,13 @@ public static class SloneUtil
 		return srcVec.normalized * maxLength;
 	}
 
-	// If the length of this vector is greater than the provided maximum, cap it
-	// at that length, but maintain the direction.
-	//
-	// srcVec (Vector3): vector to cap.
-	// maxLength (float): max length of the vector to be returned.
-	//
+	/// <summary>
+	/// If the length of this vector is greater than the provided maximum, cap it
+	/// at that length, but maintain the direction.
+	/// </summary>
+	/// <param name="srcVec">vector to cap.</param>
+	/// <param name="maxLength">max length of the vector to be returned.</param>
+	/// <returns>Vector capped to length of maxLength</returns>
 	public static Vector2 CapMagnitude(this Vector2 srcVec, float maxLength)
 	{
 		if (maxLength < 0f) {
@@ -147,20 +187,22 @@ public static class SloneUtil
 		return srcVec.normalized * maxLength;
 	}
 
-	// Returns true pctChance percent of the time.  Returns false the rest of the time.
-	//
-	// pctChance: percentage (0.0-1.0) that this function will return true.
-	// 
+	/// <summary>
+	/// Returns true pctChance percent of the time.  Returns false the rest of the time.
+	/// </summary>
+	/// <param name="pctChance">percentage (0.0-1.0) that this function will return true.</param>
+	/// <returns></returns>
 	public static bool RandChance(float pctChance)
 	{
 		return UnityEngine.Random.Range (0.0f, 1.0f) < pctChance;
 	}
 
-	// Generates a random forward vector witin a specified range.
-	//
-	// angleCenter: The vector at the center of all possible output.
-	// angleRange: The maximum range off center of the output.
-	//
+	/// <summary>
+	/// Generates a random forward vector witin a specified range.
+	/// </summary>
+	/// <param name="angleCenter">The vector at the center of all possible output.</param>
+	/// <param name="angleRange">The maximum range off center of the output.</param>
+	/// <returns>A random direction vector.</returns>
 	public static Vector3 RandDirection(Vector3 angleCenter, float angleRange = 360.0f)
 	{
 		if (angleCenter.sqrMagnitude == 0f) {
@@ -174,21 +216,22 @@ public static class SloneUtil
 		return angleCenter;
 	}
 
-	// Destroys a GameObject after a delay.
-	//
-	// gObj: Gameobject to destroy.
-	// timeSec: Time in seconds after which to destroy it.
-	// 
+	/// <summary>
+	/// Destroys a GameObject after a delay.
+	/// </summary>
+	/// <param name="gObj">Gameobject to destroy.</param>
+	/// <param name="timeSec">Time in seconds after which to destroy it.</param>
 	public static void DestroyAfterTime(this GameObject gObj, float timeSec) {
 		DestroyAfterTime dat = gObj.AddComponent<DestroyAfterTime> ();
 		dat.lifetime = timeSec;
 	}
 
-	// Waits for button(s) press.  Has optional timeout.
-	//
-	// buttons: if any of these buttons is pressed, wait will expire.
-	// timeout (optional): if this time passes, wait will expire.
-	//
+	/// <summary>
+	/// Waits for button(s) press.  Has optional timeout.
+	/// </summary>
+	/// <param name="buttons">if any of these buttons is pressed, wait will expire.</param>
+	/// <param name="timeout">if this time passes, wait will expire.</param>
+	/// <returns>Coroutine enumerator.</returns>
 	public static IEnumerator WaitForButtonDown(string[] buttons, float timeout = -1.0f)
 	{
 		GameObject o = new GameObject ();
@@ -203,12 +246,13 @@ public static class SloneUtil
 		GameObject.Destroy (o);
 	}
 
-	// Advances a value at a specified speed, stopping it once it reaches that value.
-	//
-	// val: current value
-	// goal: goal value
-	// speed: rate at which to move toward goal.
-	//
+	/// <summary>
+	/// Advances a value at a specified speed, stopping it once it reaches that value.
+	/// </summary>
+	/// <param name="val">current value</param>
+	/// <param name="goal">goal value</param>
+	/// <param name="speed">rate of change toward the goal</param>
+	/// <returns>Value advanced one frame toward the goal.</returns>
 	public static float AdvanceValue( float val, float goal, float speed) {
 		if (val < goal) {
 			val += speed * Time.deltaTime;
@@ -218,6 +262,89 @@ public static class SloneUtil
 			val = val < goal ? goal : val;
 		}
 		return val;
+	}
+
+	// Turn toward something by rotating only around the z axis.
+	// t: transfrom to rotate toward the provided point.
+	// focalPoint: The point to rotate toward.
+	// degreesPerSec: Speed in degrees/sec at which we rotate toward the target. (Default: -1, immediate)
+	//
+	public static bool TurnToPoint2D(this Transform t, Vector3 focalPoint, float degreesPerSec = -1f)
+	{
+		Vector3 flatForward = new Vector3 (t.forward.x, t.forward.y, 0f);
+		if (flatForward == Vector3.zero) {
+			return false;
+		}
+
+		flatForward.Normalize ();
+
+		Vector3 goalForwardRaw = focalPoint - t.position;
+		goalForwardRaw = new Vector3 (goalForwardRaw.x, goalForwardRaw.y, 0f);
+		if (goalForwardRaw == Vector3.zero) {
+			return false;
+		}
+
+		Vector3 goalForwardNorm = goalForwardRaw.normalized;
+
+		float currentAngle = Vector3.Angle (Vector3.right, flatForward) * Mathf.Sign(flatForward.y);
+		float goalAngle = Vector3.Angle (Vector3.right, goalForwardNorm) * Mathf.Sign(goalForwardNorm.y);
+
+		float maxChange = Mathf.DeltaAngle (currentAngle, goalAngle);
+		float changeThisFrame = maxChange;
+
+		// Negative max degrees per sec means do it immediately.
+		if (degreesPerSec >= 0f) {
+			changeThisFrame = Mathf.Clamp (maxChange, -degreesPerSec * Time.deltaTime, degreesPerSec * Time.deltaTime);
+		}
+
+		t.RotateAround (t.position, Vector3.forward, changeThisFrame);
+
+		return maxChange == Mathf.Abs(changeThisFrame);
+	}
+
+	// Call this every frame on a transform to turn it such that the forward-vector will
+	// eventually face focalPoint.
+	//
+	// t: transform to rotate toward focalPoint.
+	// focalPoint: point which you're rotating toward.
+	// degreesPerSec: rate of the turn in degrees/second (default: -1, immediate).
+	//
+	// returns true when it is facing the object.
+	public static bool TurnToPoint(this Transform t, Vector3 focalPoint, float degreesPerSec = -1f)
+	{
+		// Position of turning object.
+		Vector3 pos = t.position;
+
+		// Vector from turning object to its target.
+		Vector3 toFocalPoint = focalPoint - pos;
+
+		// Current angle of turning object.
+		Vector3 startAngles = t.eulerAngles;
+
+		Quaternion targetRotation = Quaternion.LookRotation (toFocalPoint, t.up);
+		Vector3 targetAngles = targetRotation.eulerAngles;
+
+		if (degreesPerSec >= 0f)
+			t.eulerAngles = AdvanceEulerAngles (t.eulerAngles, targetAngles, degreesPerSec);
+		else
+			t.eulerAngles = targetAngles;
+
+		return t.eulerAngles == targetAngles;
+	}
+
+	// Advances a set of euler angles at a specified speed, stopping once it reaches the specified angles.
+	//
+	// val: current angles (degrees)
+	// goal: goal angle (degrees)
+	// speed: speed of change (in degrees/second)
+	//
+	public static Vector3 AdvanceEulerAngles( Vector3 val, Vector3 goal, float speed)
+	{
+		return new Vector3 (
+			AdvanceAngle (val.x, goal.x, speed),
+			AdvanceAngle (val.y, goal.y, speed),
+			AdvanceAngle (val.z, goal.z, speed)
+		);
 	}
 
 	// Advances an angle at a specified speed, stopping once it reaches the specified angle.
@@ -253,32 +380,35 @@ public static class SloneUtil
 			Mathf.LerpAngle (a.z, b.z, pct));
 	}
 
-	// Moves a vector at a specified speed, stopping it once it reaches that value.
-	//
-	// val: current value
-	// goal: goal value
-	// speed: rate at which to move toward goal.
-	//
+	/// <summary>
+	/// Advances a vector at a specified speed, stopping it once it reaches the goal value.
+	/// </summary>
+	/// <param name="val">current value</param>
+	/// <param name="goal">goal value</param>
+	/// <param name="speed">rate of change toward the goal</param>
+	/// <returns>Value advanced one frame toward the goal</returns>
 	public static Vector2 AdvanceValue( Vector2 val, Vector2 goal, float speed ) {
 		return new Vector2( AdvanceValue(val.x, goal.x, speed), AdvanceValue(val.y, goal.y, speed));
 	}
 
-	// Moves a vector at a specified speed, stopping it once it reaches that value.
-	//
-	// val: current value
-	// goal: goal value
-	// speed: rate at which to move toward goal.
-	//
+	/// <summary>
+	/// Advances a vector at a specified speed, stopping it once it reaches the goal value.
+	/// </summary>
+	/// <param name="val">current value</param>
+	/// <param name="goal">goal value</param>
+	/// <param name="speed">rate of change toward the goal</param>
+	/// <returns>Value advanced one frame toward the goal</returns>
 	public static Vector3 AdvanceValue( Vector3 val, Vector3 goal, float speed ) {
 		return new Vector3( AdvanceValue(val.x, goal.x, speed), AdvanceValue(val.y, goal.y, speed), AdvanceValue (val.z, goal.z, speed));
 	}
 
-	// Moves a color at a specified speed, stopping it once it reaches the goal value.
-	//
-	// val: current value
-	// goal: goal value
-	// speed: rate at which to move toward goal.
-	//
+	/// <summary>
+	/// Advances a color value at a specified speed, stopping it once it reaches the goal color.
+	/// </summary>
+	/// <param name="val">current value</param>
+	/// <param name="goal">goal value</param>
+	/// <param name="speed">rate of change toward the goal</param>
+	/// <returns>Value advanced one frame toward the goal</returns>
 	public static Color AdvanceValue( Color val, Color goal, float speed ) {
 		return new Color( AdvanceValue(val.r,goal.r,speed), AdvanceValue(val.g, goal.g, speed), AdvanceValue(val.b, goal.b, speed), AdvanceValue(val.a, goal.a, speed));
 	}
@@ -288,7 +418,14 @@ public static class SloneUtil
 	// from: starting color, returned if pct is 0.0
 	// to: ending color, returned if pct is 1.0
 	// pct: percentage (0.0-1.0) along the continuum between from and to.
-	// 
+	//
+	/// <summary>
+	/// Lerps from one color to 
+	/// </summary>
+	/// <param name="from"></param>
+	/// <param name="to"></param>
+	/// <param name="pct"></param>
+	/// <returns></returns>
 	public static Color Lerp( Color from, Color to, float pct )
 	{
 		return new Color (Mathf.Lerp (from.r, to.r, pct), Mathf.Lerp (from.g, to.g, pct), Mathf.Lerp (from.b, to.b, pct), Mathf.Lerp (from.a, to.a, pct));
@@ -299,7 +436,7 @@ public static class SloneUtil
 	// from: starting value, returned if pct is 0.0
 	// to: ending value, returned if pct is 1.0
 	// pct: percentage (0.0-inf) along the continuum between from and to
-	// 
+	//
 	public static float LerpUnbounded(float from, float to, float pct)
 	{
 		return from + ((to - from) * pct);
@@ -310,7 +447,7 @@ public static class SloneUtil
 	// from: starting value, returned if pct is 0.0
 	// to: ending value, returned if pct is 1.0
 	// pct: percentage (0.0-inf) along the continuum between from and to
-	// 
+	//
 	public static Vector2 LerpUnbounded(Vector2 from, Vector2 to, float pct)
 	{
 		return from + ((to - from) * pct);
@@ -321,7 +458,7 @@ public static class SloneUtil
 	// from: starting value, returned if pct is 0.0
 	// to: ending value, returned if pct is 1.0
 	// pct: percentage (0.0-inf) along the continuum between from and to
-	// 
+	//
 	public static Vector3 LerpUnbounded(Vector3 from, Vector3 to, float pct)
 	{
 		return from + ((to - from) * pct);
@@ -397,7 +534,7 @@ public static class SloneUtil
 	// NOTE: can accurately sort using these integers.
 	//
 	// t: time to pack into the integer
-	// 
+	//
 	public static int PackDate( System.DateTime t )
 	{
 		int minute = t.Minute;
@@ -412,7 +549,7 @@ public static class SloneUtil
 	// Unpack a date packed with PackDate.
 	//
 	// i: integer that has been created from a packed date
-	// 
+	//
 	public static System.DateTime UnpackDate( int i )
 	{
 		int minute = i & MINUTE_MASK;
@@ -629,7 +766,7 @@ public static class SloneUtil
 	{
 		return Mathf.Abs (val2 - val1) < epsilon;
 	}
-		
+
 	/// <summary>
 	/// Take a grayscale color and add hue and saturation from a full-color to it.
 	/// </summary>

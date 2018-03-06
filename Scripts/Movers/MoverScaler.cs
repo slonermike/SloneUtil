@@ -19,14 +19,19 @@ public class MoverScaler : Mover {
 	float scaleSpeed;
 	Vector3 startScale;
 
-	void Start()
+	void OnEnable()
 	{
-		if (scaleTime <= 0f) {
-			Debug.LogError ("MoverScaler given zero or negative scale time: " + scaleTime);
-			scaleTime = 0.1f;
+		scaleSpeed = 0f;
+		if (startDelay > 0f) {
+			Invoke("UpdateSpeed", startDelay);
+		} else {
+			UpdateSpeed();
 		}
+	}
 
-		startScale = transform.localScale;
+	void UpdateSpeed()
+	{
+		startScale = moverTransform.localScale;
 
 		if (scaleAsMultiplier) {
 			Vector3 finalScale = startScale;
@@ -34,20 +39,23 @@ public class MoverScaler : Mover {
 			scaleGoal = finalScale;
 		}
 
-		scaleSpeed = (scaleGoal - startScale).magnitude / scaleTime;
+		if (scaleTime <= 0f) {
+			moverTransform.localScale = scaleGoal;
+			scaleSpeed = 0f;
+		} else {
+			scaleSpeed = (scaleGoal - startScale).magnitude / scaleTime;
+		}
 	}
 
 	void Update()
 	{
-		if (startDelay > 0f) {
-			startDelay -= Time.deltaTime;
-		}
+		if (scaleSpeed > 0f) {
+			moverTransform.localScale = SloneUtil.AdvanceValue (moverTransform.localScale, scaleGoal, scaleSpeed);
 
-		transform.localScale = SloneUtil.AdvanceValue (transform.localScale, scaleGoal, scaleSpeed);
-
-		// Disable it when we meet the goal.
-		if (transform.localScale == scaleGoal) {
-			this.enabled = false;
+			// Once we reach it, stop advancing.
+			if (moverTransform.localScale == scaleGoal) {
+				scaleSpeed = 0f;
+			}
 		}
 	}
 }

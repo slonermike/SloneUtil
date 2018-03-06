@@ -10,5 +10,10 @@ using UnityEngine;
 
 // Allows us to find all the movers on an object.
 public abstract class Mover : MonoBehaviour {
-
+	public Transform moverDelegate;
+	public Transform moverTransform {
+		get {
+			return moverDelegate != null ? moverDelegate : transform;
+		}
+	}
 }
