@@ -1,18 +1,18 @@
 ﻿/************************************************************
- * 
+ *
  *                    Asset Pool
  *                 2016 Slonersoft Games
- * 
+ *
  * Create a list of assets that should be accessible from anywhere
  * in the game/level.  Create a prefab from the object with this pool,
  * and place it in each scene where the list should be accessible.
  *
  * Access the prefabs with:
  * GameWidePrefabs.pools[AssetPoolType].GetPrefab("Prefab Name")
- * 
- * 
+ *
+ *
  * Do what you want.  Distributed with WTFPL license.
- * 
+ *
  ************************************************************/
 
 using UnityEngine;
@@ -36,7 +36,7 @@ public class AssetPool : MonoBehaviour {
 	static Dictionary<AssetPoolType, AssetPool> _pools;
 	public static Dictionary<AssetPoolType, AssetPool> pools {
 		get {
-			
+
 			if (_pools == null) {
 				_pools = new Dictionary<AssetPoolType, AssetPool> ();
 			}
@@ -83,9 +83,9 @@ public class AssetPool : MonoBehaviour {
 	}
 
 	// Retrieve a gamewide prefab from the list.
-	// 
+	//
 	// prefabName: the name in the inspector assigned to the child prefab.
-	// 
+	//
 	public GameObject GetPrefab(string prefabName)
 	{
 		if (dictionary.ContainsKey (prefabName)) {
@@ -96,9 +96,9 @@ public class AssetPool : MonoBehaviour {
 	}
 
 	// Spawn an object from a gamewide prefab in the list.
-	// 
+	//
 	// prefabName: the name in the inspector assigned to the prefab.
-	// 
+	//
 	public GameObject InstantiatePrefab(string prefabName)
 	{
 		if (dictionary.ContainsKey (prefabName)) {
