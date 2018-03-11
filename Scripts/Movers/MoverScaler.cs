@@ -29,7 +29,7 @@ public class MoverScaler : Mover {
 		}
 	}
 
-	void UpdateSpeed()
+	public void UpdateSpeed()
 	{
 		startScale = moverTransform.localScale;
 
