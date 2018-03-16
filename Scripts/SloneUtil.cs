@@ -420,7 +420,7 @@ public static class SloneUtil
 	// pct: percentage (0.0-1.0) along the continuum between from and to.
 	//
 	/// <summary>
-	/// Lerps from one color to 
+	/// Lerps from one color to
 	/// </summary>
 	/// <param name="from"></param>
 	/// <param name="to"></param>
@@ -784,6 +784,40 @@ public static class SloneUtil
 		newColor.a = bwColor.a;
 
 		return newColor;
+	}
+
+	public static string[][] ROMAN_NUMERALS = new string[][]
+	{
+		new string[]{"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"}, // ones
+		new string[]{"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"}, // tens
+		new string[]{"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"}, // hundreds
+		new string[]{"", "M", "MM", "MMM"} // thousands
+	};
+
+	/// <summary>
+	/// Convert a number from integer to roman numeral string.
+	/// Adapted from https://stackoverflow.com/questions/7040289/converting-integers-to-roman-numerals
+	/// </summary>
+	/// <param name="number">Integer to convert to roman numeral string.</param>
+	/// <returns>String of roman numerals representing the value.</returns>
+	public static string ToRomanNumeral(this int number)
+	{
+        // split integer string into array and reverse array
+		char[] intArr = number.ToString().ToCharArray();
+		Array.Reverse(intArr);
+        int len = intArr.Length;
+        string romanNumeral = "";
+        int i = len;
+
+        // starting with the highest place (for 3046, it would be the thousands
+        // place, or 3), get the roman numeral representation for that place
+        // and add it to the final roman numeral string
+        while (i-- > 0)
+        {
+            romanNumeral += ROMAN_NUMERALS[i][Int32.Parse(intArr[i].ToString())];
+        }
+
+        return romanNumeral;
 	}
 }
 
