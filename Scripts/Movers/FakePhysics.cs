@@ -6,10 +6,18 @@ public class FakePhysics : Mover {
 
 	public Vector3 velocity;
 	public List<Vector3> accelerators = new List<Vector3> ();
+
+	[Tooltip("Speed at which we return to zero when no accelerators are applied.")]
+	public float deceleration = 0f;
 	public float topSpeed = -1f;
 
 	public bool localMotion = false;
-	
+
+	void Decelerate() {
+		if (deceleration > 0 && accelerators.Count == 0)
+		velocity = SloneUtil.AdvanceValue(velocity, Vector3.zero, deceleration);
+	}
+
 	// Update is called once per frame
 	void FixedUpdate () {
 		foreach (Vector3 acc in accelerators) {
@@ -29,5 +37,7 @@ public class FakePhysics : Mover {
 		} else {
 			moverTransform.position += frameMove;
 		}
+
+		Decelerate();
 	}
 }
