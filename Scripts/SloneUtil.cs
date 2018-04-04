@@ -773,14 +773,18 @@ public static class SloneUtil
 	/// <returns>fullColor with alpha and brightness from bwColor.</returns>
 	/// <param name="bwColor">Grayscale color from which to get alpha and brightness.</param>
 	/// <param name="fullColor">Full color from which to get hue and saturation.</param>
-	public static Color ConvertColorFromGrayscale(Color bwColor, Color fullColor)
+	/// <param name="saturation">Negative to use saturation from original color, non-negative to set explicitly.null</param>
+	public static Color ConvertColorFromGrayscale(Color bwColor, Color fullColor, float saturation = -1f)
 	{
 		float fullH, fullS, fullV;
 		Color.RGBToHSV (fullColor, out fullH, out fullS, out fullV);
 
 		float h, s, v;
 		Color.RGBToHSV (bwColor, out h, out s, out v);
-		Color newColor = Color.HSVToRGB (fullH, fullS, v);
+
+		float finalS = saturation >= 0f ? saturation : fullS;
+
+		Color newColor = Color.HSVToRGB (fullH, finalS, v);
 		newColor.a = bwColor.a;
 
 		return newColor;
@@ -818,6 +822,20 @@ public static class SloneUtil
         }
 
         return romanNumeral;
+	}
+
+	/// <summary>
+	/// Convert from snake case to upper case.
+	/// </summary>
+	/// <param name="s">String to convert.</param>
+	/// <param name="delimiter">Space by default, specify to change what's between words.</param>
+	/// <returns></returns>
+	public static string SnakeCaseToUppercase(this string s, string delimiter = " ") {
+		string[] strings = s.Split(new [] {"_"}, StringSplitOptions.RemoveEmptyEntries);
+		for (int i = 0; i < strings.Length; i++) {
+			strings[i] = char.ToUpperInvariant(strings[i][0]) + strings[i].Substring(1);
+		}
+		return String.Join(" ", strings);
 	}
 }
 
