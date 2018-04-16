@@ -16,10 +16,13 @@ public class SpawnOnDeath : MonoBehaviour {
 	[Tooltip("(optional) Position to point objects away from.")]
 	public Transform pointAwayFrom;
 
+	[Tooltip("(optional) Specific positions for spawning.")]
+	public Transform[] spawnPositions;
+
 	/// <summary>
 	/// Spawn the objects that appear on death.
 	/// </summary>
-	public void DoSpawn()
+	public void DoSpawn(GameObject killer)
 	{
 		if (!enabled) {
 			return;
@@ -47,7 +50,17 @@ public class SpawnOnDeath : MonoBehaviour {
 		}
 
 		for (int i = 0; i < numToSpawn; i++) {
-			Instantiate (spawnObject, transform.position, spawnOrient);
+			Vector3 spawnPosition = transform.position;
+			if (spawnPositions.Length > 0) {
+				spawnPosition = spawnPositions[i%spawnPositions.Length].position;
+				spawnOrient = spawnPositions[i%spawnPositions.Length].rotation;
+			}
+
+			GameObject o = Instantiate (spawnObject, spawnPosition, spawnOrient);
+			SpawnOnDeathHandler handler = o.GetComponent<SpawnOnDeathHandler>();
+			if (handler != null) {
+				handler.OnSpawn(gameObject, killer);
+			}
 		}
 
 		// don't repeat it.
@@ -64,11 +77,11 @@ public static class SpawnOnDeathUtil {
 	/// Find all SpawnOnDeath behaviors on the object and children, and do the spawns.
 	/// </summary>
 	/// <param name="g">Owner of the SpawnOnDeath behaviors.</param>
-	public static void DoSpawnsOnDeath(this GameObject g)
+	public static void DoSpawnsOnDeath(this GameObject g, GameObject killer)
 	{
 		SpawnOnDeath[] sods = g.GetComponentsInChildren<SpawnOnDeath> ();
 		foreach (SpawnOnDeath sod in sods) {
-			sod.DoSpawn ();
+			sod.DoSpawn (killer);
 		}
 
 		DropXP drop = g.GetComponent<DropXP> ();
