@@ -77,6 +77,27 @@ public static class SloneUtil2D
 		));
 	}
 
+	/// <summary>
+	/// Expands the bounding box to include the provided position.
+	/// </summary>
+	/// <param name="bbmin">Minimum extents of the bounding box (updated in place)</param>
+	/// <param name="bbmax">Maximum extents of the bounding box (updated in place)</param>
+	/// <param name="position">Position to include in the bounding box.</param>
+	public static void ExpandBoundingBox(ref Vector2 bbmin, ref Vector2 bbmax, Vector2 position)
+	{
+		if (position.x < bbmin.x) {
+			bbmin = new Vector2(position.x, bbmin.y);
+		} else if (position.x > bbmax.x) {
+			bbmax = new Vector2(position.x, bbmax.y);
+		}
+
+		if (position.y < bbmin.y) {
+			bbmin = new Vector2(bbmin.x, position.y);
+		} else if (position.y > bbmax.y) {
+			bbmax = new Vector2(bbmax.x, position.y);
+		}
+	}
+
 	// Get the world position of the mouse.
 	//
 	// For orthographic cameras only.
