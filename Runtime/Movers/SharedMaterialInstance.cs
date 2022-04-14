@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Slonersoft.SloneUtil {
+namespace Slonersoft.SloneUtil.Movers {
 public class SpriteMaterialInstance : MonoBehaviour {
 			public List<SpriteRenderer> renderers = new List<SpriteRenderer>();
 		Material instancedMaterial;

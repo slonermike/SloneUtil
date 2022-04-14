@@ -6,8 +6,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Slonersoft.SloneUtil.Core;
 
-namespace Slonersoft.SloneUtil {
+namespace Slonersoft.SloneUtil.Movers {
 	public class MoverTranslator : Mover {
 
 		[Tooltip("Speed in units per second.")]
@@ -22,7 +23,7 @@ namespace Slonersoft.SloneUtil {
 		// Update is called once per frame
 		void Update () {
 			if (damping > 0f) {
-				velocity = SloneUtil.AdvanceValue(velocity, Vector3.zero, damping);
+				velocity = CoreUtils.AdvanceValue(velocity, Vector3.zero, damping);
 			}
 			if (useLocalAxes) {
 				moverTransform.position += (velocity.x * moverTransform.right) + (velocity.y * moverTransform.up) + (velocity.z * moverTransform.forward) * Time.deltaTime;

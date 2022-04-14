@@ -8,12 +8,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Allows us to find all the movers on an object.
-public abstract class Mover : MonoBehaviour {
-	public Transform moverDelegate;
-	public Transform moverTransform {
-		get {
-			return moverDelegate != null ? moverDelegate : transform;
+namespace Slonersoft.SloneUtil.Movers {
+	// Allows us to find all the movers on an object.
+	public abstract class Mover : MonoBehaviour {
+		public Transform moverDelegate;
+		public Transform moverTransform {
+			get {
+				return moverDelegate != null ? moverDelegate : transform;
+			}
 		}
 	}
+
 }

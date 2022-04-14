@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Slonersoft.SloneUtil {
+using Slonersoft.SloneUtil.Core;
+
+namespace Slonersoft.SloneUtil.AssetManagement {
     public class ObjectPool<TBehaviour> where TBehaviour : Behaviour
     {
         private TBehaviour[] rawPool;
@@ -14,7 +16,7 @@ namespace Slonersoft.SloneUtil {
             poolParent = new GameObject($"Object Pool: {prefab.name}");
             rawPool = new TBehaviour[numToAllocate];
             for (int i = 0; i < numToAllocate; i++) {
-                rawPool[i] = SloneUtil.InstantiateChild(poolParent, prefab).GetComponent<TBehaviour>();
+                rawPool[i] = CoreUtils.InstantiateChild(poolParent, prefab).GetComponent<TBehaviour>();
                 Debug.Assert(rawPool[i] != null, $"Prefab ${prefab.name} for ObjectPool does not have the appropriate behaviour on it.");
                 rawPool[i].gameObject.SetActive(false);
             }

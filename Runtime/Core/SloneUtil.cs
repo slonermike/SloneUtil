@@ -14,9 +14,9 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Slonersoft.SloneUtil
+namespace Slonersoft.SloneUtil.Core
 {
-	public static class SloneUtil
+	public static class CoreUtils
 	{
 		/// <summary>
 		/// If you need a temporary game object, use this one, so we don't keep destroying and re-creating them.
@@ -434,7 +434,7 @@ namespace Slonersoft.SloneUtil
 		public static float LerpSmooth(float from, float to, float pct, bool oscillate = false)
 		{
 			float smoothed = SmoothValue (pct, oscillate);
-			return SloneUtil.LerpUnbounded (from, to, smoothed);
+			return CoreUtils.LerpUnbounded (from, to, smoothed);
 		}
 
 		// Lerp from one vector to another using a smoothed lerp to ease departure and approach.
@@ -447,7 +447,7 @@ namespace Slonersoft.SloneUtil
 		public static Vector2 LerpSmooth(Vector2 from, Vector2 to, float pct, bool oscillate = false)
 		{
 			float smoothed = SmoothValue (pct, oscillate);
-			return SloneUtil.LerpUnbounded (from, to, smoothed);
+			return CoreUtils.LerpUnbounded (from, to, smoothed);
 		}
 
 		// Lerp from one vector to another using a smoothed lerp to ease departure and approach.
@@ -460,7 +460,7 @@ namespace Slonersoft.SloneUtil
 		public static Vector3 LerpSmooth(Vector3 from, Vector3 to, float pct, bool oscillate = false)
 		{
 			float smoothed = SmoothValue (pct, oscillate);
-			return SloneUtil.LerpUnbounded (from, to, smoothed);
+			return CoreUtils.LerpUnbounded (from, to, smoothed);
 		}
 
 		const int MINUTE_MASK = 0x3f;		// 6 bits (max 63)

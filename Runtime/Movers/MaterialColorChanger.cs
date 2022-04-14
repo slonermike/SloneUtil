@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Slonersoft.SloneUtil.Core;
 
-namespace Slonersoft.SloneUtil {
+namespace Slonersoft.SloneUtil.Movers {
 	public class MaterialColorChanger : MonoBehaviour {
 
 		public SharedMaterialInstance sharedMaterialInstance;
@@ -29,7 +30,7 @@ namespace Slonersoft.SloneUtil {
 				pct = Mathf.Clamp01((Time.time - startTime) / changeTime);
 			}
 
-			sharedMaterialInstance.GetMaterialInstance().color = SloneUtil.Lerp (startColor, endColor, pct);
+			sharedMaterialInstance.GetMaterialInstance().color = CoreUtils.Lerp (startColor, endColor, pct);
 		}
 	}
 

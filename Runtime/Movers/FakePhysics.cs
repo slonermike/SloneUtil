@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Slonersoft.SloneUtil.Core;
 
-namespace Slonersoft.SloneUtil {
+namespace Slonersoft.SloneUtil.Movers {
 	public class FakePhysics : Mover {
 
 		public Vector3 velocity;
@@ -16,7 +17,7 @@ namespace Slonersoft.SloneUtil {
 
 		void Decelerate() {
 			if (deceleration > 0 && accelerators.Count == 0)
-			velocity = SloneUtil.AdvanceValue(velocity, Vector3.zero, deceleration);
+			velocity = CoreUtils.AdvanceValue(velocity, Vector3.zero, deceleration);
 		}
 
 		// Update is called once per frame
@@ -26,7 +27,7 @@ namespace Slonersoft.SloneUtil {
 			}
 
 			if (topSpeed > 0) {
-				velocity = SloneUtil.CapMagnitude (velocity, topSpeed);
+				velocity = CoreUtils.CapMagnitude (velocity, topSpeed);
 			}
 
 			Vector3 frameMove = velocity * Time.fixedDeltaTime;

@@ -12,7 +12,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Slonersoft.SloneUtil {
+using Slonersoft.SloneUtil.Core;
+
+namespace Slonersoft.SloneUtil.Movers {
 	// Oscillation curve types.
 	//
 	public enum OscillationType {
@@ -62,7 +64,7 @@ namespace Slonersoft.SloneUtil {
 			float pct = ((Time.time - startTime) / wavelength) * 2f;
 
 			if (curveType == OscillationType.SMOOTH) {
-				return SloneUtil.LerpSmooth (0f, 1f, pct, true);
+				return CoreUtils.LerpSmooth (0f, 1f, pct, true);
 			} else {
 				if (curveType != OscillationType.LINEAR) {
 					Debug.LogError ("Unknown OscillationType: " + curveType);

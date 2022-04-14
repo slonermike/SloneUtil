@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Slonersoft.SloneUtil {
+using Slonersoft.SloneUtil.Core;
+
+namespace Slonersoft.SloneUtil.Movers {
 	public class MoverScaler : Mover {
 
 		[Tooltip("Amount of time (seconds) to take to change scale.")]
@@ -51,7 +53,7 @@ namespace Slonersoft.SloneUtil {
 		void Update()
 		{
 			if (scaleSpeed > 0f) {
-				moverTransform.localScale = SloneUtil.AdvanceValue (moverTransform.localScale, scaleGoal, scaleSpeed);
+				moverTransform.localScale = CoreUtils.AdvanceValue (moverTransform.localScale, scaleGoal, scaleSpeed);
 
 				// Once we reach it, stop advancing.
 				if (moverTransform.localScale == scaleGoal) {

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Slonersoft.SloneUtil
+using Slonersoft.SloneUtil.Core;
+
+namespace Slonersoft.SloneUtil.Movers
 {
 	// Moves things in local space to a specified point.
 	//
@@ -38,13 +40,13 @@ namespace Slonersoft.SloneUtil
 
 					if (localMovement) {
 						if (smooth) {
-							moverTransform.localPosition = SloneUtil.LerpSmooth (startPosition, newPosition, pct);
+							moverTransform.localPosition = CoreUtils.LerpSmooth (startPosition, newPosition, pct);
 						} else {
 							moverTransform.localPosition = Vector3.Lerp (startPosition, newPosition, pct);
 						}
 					} else {
 						if (smooth) {
-							moverTransform.position = SloneUtil.LerpSmooth (startPosition, newPosition, pct);
+							moverTransform.position = CoreUtils.LerpSmooth (startPosition, newPosition, pct);
 						} else {
 							moverTransform.position = Vector3.Lerp (startPosition, newPosition, pct);
 						}

@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Slonersoft.SloneUtil.Core;
 
-namespace Slonersoft.SloneUtil {
+namespace Slonersoft.SloneUtil.Movers {
 	public class RotateTo : Mover {
 
 		public float rotateTime = 1.0f;
@@ -38,13 +39,13 @@ namespace Slonersoft.SloneUtil {
 					float pct = (Time.time - startTime) / rotateTime;
 
 					if (smooth) {
-						pct = SloneUtil.LerpSmooth (0f, 1f, pct);
+						pct = CoreUtils.LerpSmooth (0f, 1f, pct);
 					}
 
 					if (localMovement) {
-						moverTransform.localEulerAngles = SloneUtil.LerpEulerAngles (startAngles, newAngles, pct);
+						moverTransform.localEulerAngles = CoreUtils.LerpEulerAngles (startAngles, newAngles, pct);
 					} else {
-						moverTransform.eulerAngles = SloneUtil.LerpEulerAngles (startAngles, newAngles, pct);
+						moverTransform.eulerAngles = CoreUtils.LerpEulerAngles (startAngles, newAngles, pct);
 					}
 				}
 			}

@@ -10,7 +10,7 @@
 using UnityEngine;
 using System.Collections;
 
-namespace Slonersoft.SloneUtil {
+namespace Slonersoft.SloneUtil.Movers {
 	public class MoverScaleOscillator : Mover {
 
 		[Tooltip("Time in seconds to make a full oscillation.")]

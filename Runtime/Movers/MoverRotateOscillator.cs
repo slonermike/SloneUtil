@@ -11,7 +11,7 @@
 using UnityEngine;
 using System.Collections;
 
-namespace Slonersoft.SloneUtil {
+namespace Slonersoft.SloneUtil.Movers {
 	public class MoverRotateOscillator : Mover {
 
 		[Tooltip("Magnitude of oscillation around each axis.")]

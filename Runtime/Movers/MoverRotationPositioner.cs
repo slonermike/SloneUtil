@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Slonersoft.SloneUtil.Core;
 
-namespace Slonersoft.SloneUtil {
+namespace Slonersoft.SloneUtil.Movers {
 	// Moves things in local space to a specified point.
 	//
 	public class MoverRotationPositioner : Mover {
@@ -30,9 +31,9 @@ namespace Slonersoft.SloneUtil {
 					yield return new WaitForFixedUpdate();
 					float pct = (Time.time - startTime) / moveTime;
 					if (localMovement) {
-						moverTransform.localEulerAngles = SloneUtil.LerpEulerAngles (startRotation, newRotation, pct);
+						moverTransform.localEulerAngles = CoreUtils.LerpEulerAngles (startRotation, newRotation, pct);
 					} else {
-						moverTransform.eulerAngles = SloneUtil.LerpEulerAngles (startRotation, newRotation, pct);
+						moverTransform.eulerAngles = CoreUtils.LerpEulerAngles (startRotation, newRotation, pct);
 					}
 				}
 			}

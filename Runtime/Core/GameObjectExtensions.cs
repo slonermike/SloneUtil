@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Slonersoft.SloneUtil {
+namespace Slonersoft.SloneUtil.Core {
 
   public static class SloneUtilExtensions {
     /// <summary>

@@ -10,7 +10,7 @@
 using UnityEngine;
 using System.Collections;
 
-namespace Slonersoft.SloneUtil {
+namespace Slonersoft.SloneUtil.Core {
 	public class DoAfterTime : MonoBehaviour {
 
 			public delegate void DelayedAction();
@@ -24,7 +24,7 @@ namespace Slonersoft.SloneUtil {
 
 			action();
 
-					Destroy(this);
+			Destroy(this);
 		}
 
 		// Use this for initialization
