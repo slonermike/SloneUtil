@@ -13,6 +13,7 @@ using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Slonersoft.SloneUtil;
 
 public static class SloneUtil2D
 {

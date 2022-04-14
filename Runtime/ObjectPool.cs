@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Slonersoft {
+namespace Slonersoft.SloneUtil {
     public class ObjectPool<TBehaviour> where TBehaviour : Behaviour
     {
         private TBehaviour[] rawPool;

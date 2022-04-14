@@ -1,68 +1,71 @@
 ﻿/************************************************************
- * 
+ *
  *                    Mover Oscillator
  *                 2017 Slonersoft Games
- * 
+ *
  * Unity component for oscillating an object's position.
- * 
+ *
  * Allows separate parameters along each axis, allowing complex
  * "spirograph-style" movement patterns without the overhead of
  * animations or animation curves.
- * 
+ *
  ************************************************************/
 
 using UnityEngine;
 using System.Collections;
 
-public class MoverOscillator : Mover {
+namespace Slonersoft.SloneUtil {
+	public class MoverOscillator : Mover {
 
-	[Tooltip("Magnitude of oscillation along each axis.")]
-	public Vector3 magnitude;
+		[Tooltip("Magnitude of oscillation along each axis.")]
+		public Vector3 magnitude;
 
-	[Tooltip("Time (in seconds) of a full oscillation.")]
-	public Vector3 wavelength = Vector3.one;
+		[Tooltip("Time (in seconds) of a full oscillation.")]
+		public Vector3 wavelength = Vector3.one;
 
-	[Tooltip("Animation percentage offset for starting oscillation.")]
-	public Vector3 startOffsetPct;
+		[Tooltip("Animation percentage offset for starting oscillation.")]
+		public Vector3 startOffsetPct;
 
-	[Tooltip("Type of curve on the oscillation.")]
-	public OscillationType curveType = OscillationType.LINEAR;
+		[Tooltip("Type of curve on the oscillation.")]
+		public OscillationType curveType = OscillationType.LINEAR;
 
-	[Tooltip("True to oscillate in local space, false for global space.")]
-	public bool localMotion = true;
+		[Tooltip("True to oscillate in local space, false for global space.")]
+		public bool localMotion = true;
 
-	[Tooltip("True to rotate in both directions, with the start position as the center.")]
-	public bool biDirectional = true;
+		[Tooltip("True to rotate in both directions, with the start position as the center.")]
+		public bool biDirectional = true;
 
-	VectorOscillator oscillator;
-	private Vector3 startPos;
+		VectorOscillator oscillator;
+		private Vector3 startPos;
 
-	// Use this for initialization
-	void Start () {
+		// Use this for initialization
+		void Start () {
 
-		// Bi-directionals start in the middle of the upswing.
-		if (biDirectional) {
-			startOffsetPct += Vector3.one * 0.25f;
+			// Bi-directionals start in the middle of the upswing.
+			if (biDirectional) {
+				startOffsetPct += Vector3.one * 0.25f;
+			}
+
+			oscillator = new VectorOscillator (wavelength, startOffsetPct, curveType);
+			startPos = localMotion ? moverTransform.localPosition : moverTransform.position;
 		}
 
-		oscillator = new VectorOscillator (wavelength, startOffsetPct, curveType);
-		startPos = localMotion ? moverTransform.localPosition : moverTransform.position;
+		// Update is called once per frame
+		void Update () {
+			Vector3 newPos;
+
+			if (biDirectional) {
+				newPos = oscillator.Evaluate (startPos - magnitude, startPos + magnitude);
+			} else {
+				newPos = oscillator.Evaluate (startPos, startPos + magnitude);
+			}
+
+			if (localMotion) {
+				moverTransform.localPosition = newPos;
+			} else {
+				moverTransform.position = newPos;
+			}
+		}
 	}
 
-	// Update is called once per frame
-	void Update () {
-		Vector3 newPos;
-
-		if (biDirectional) {
-			newPos = oscillator.Evaluate (startPos - magnitude, startPos + magnitude);
-		} else {
-			newPos = oscillator.Evaluate (startPos, startPos + magnitude);
-		}
-
-		if (localMotion) {
-			moverTransform.localPosition = newPos;
-		} else {
-			moverTransform.position = newPos;
-		}
-	}
 }

@@ -11,6 +11,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using Slonersoft.SloneUtil;
 
 public class MoverRotator : Mover {
 
