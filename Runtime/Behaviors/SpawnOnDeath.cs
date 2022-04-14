@@ -2,7 +2,7 @@
 using System.Collections;
 
 /// <summary>
-/// Attach this to an object, then call SpawnOnDeathUtil.DoSpawnsOnDeath(obj) on the object
+/// Attach this to an object, then send a "death" message to the object
 /// to spawn objects in its place.
 /// </summary>
 public class SpawnOnDeath : MonoBehaviour {
@@ -18,6 +18,24 @@ public class SpawnOnDeath : MonoBehaviour {
 
 	[Tooltip("(optional) Specific positions for spawning.")]
 	public Transform[] spawnPositions;
+
+	[Tooltip("Distance from the center where they should spawn.")]
+	public float spawnRadius = 0f;
+
+	[Tooltip("Angle at which the leftmost item spawns (away from 'right').")]
+	[Range(-180,180)]
+	public float minAngle = -180f;
+
+	[Tooltip("Angle at which the rightmost item spawns (away from 'right').")]
+	[Range(-180,180)]
+	public float maxAngle = 180f;
+
+	void Awake() {
+		gameObject.ListenForBlips(Blip.Type.DIED, delegate(Blip data) {
+			BlipDamage deathData = data as BlipDamage;
+			DoSpawn(deathData.GetAttackerObj());
+		});
+	}
 
 	/// <summary>
 	/// Spawn the objects that appear on death.
@@ -38,22 +56,28 @@ public class SpawnOnDeath : MonoBehaviour {
 			return;
 		}
 
-		Quaternion spawnOrient = transform.rotation;
+		bool fullcircle = Mathf.DeltaAngle(minAngle, maxAngle) == 0f;
 
-		if (pointAwayFrom != null) {
-			Vector3 fwd = transform.forward;
-			if (transform.position != pointAwayFrom.position) {
-				fwd = transform.position - pointAwayFrom.position;
-				fwd.Normalize ();
-			}
-			spawnOrient = Quaternion.LookRotation (fwd);
+		// HACK: make it possible to rotate the offset around the center.
+		if (numToSpawn > 1 && spawnRadius <= 0f) {
+			spawnRadius = 0.01f;
 		}
 
+		Quaternion spawnOrient = transform.rotation;
 		for (int i = 0; i < numToSpawn; i++) {
 			Vector3 spawnPosition = transform.position;
+
 			if (spawnPositions.Length > 0) {
 				spawnPosition = spawnPositions[i%spawnPositions.Length].position;
 				spawnOrient = spawnPositions[i%spawnPositions.Length].rotation;
+			} else if (spawnRadius > 0f) {
+				float pct = (float)i / (float)(numToSpawn - (fullcircle ? 0 : 1));
+				float rotateAngle = numToSpawn <= 1 ? 0 : Mathf.Lerp(minAngle, maxAngle, pct);
+				spawnPosition += spawnRadius * (Quaternion.Euler(0f, 0f, rotateAngle) * transform.right);
+			}
+
+			if (pointAwayFrom != null) {
+				spawnOrient = SloneUtil2D.RotationFromRightVec(spawnPosition - pointAwayFrom.position);
 			}
 
 			GameObject o = Instantiate (spawnObject, spawnPosition, spawnOrient);
@@ -65,28 +89,5 @@ public class SpawnOnDeath : MonoBehaviour {
 
 		// don't repeat it.
 		enabled = false;
-	}
-}
-
-/// <summary>
-/// Manages spawning of objects on death.
-/// </summary>
-public static class SpawnOnDeathUtil {
-
-	/// <summary>
-	/// Find all SpawnOnDeath behaviors on the object and children, and do the spawns.
-	/// </summary>
-	/// <param name="g">Owner of the SpawnOnDeath behaviors.</param>
-	public static void DoSpawnsOnDeath(this GameObject g, GameObject killer)
-	{
-		SpawnOnDeath[] sods = g.GetComponentsInChildren<SpawnOnDeath> ();
-		foreach (SpawnOnDeath sod in sods) {
-			sod.DoSpawn (killer);
-		}
-
-		DropXP drop = g.GetComponent<DropXP> ();
-		if (drop != null) {
-			drop.DoDrop ();
-		}
 	}
 }

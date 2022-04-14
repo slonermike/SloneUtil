@@ -23,7 +23,7 @@ public class DestroyAfterTime : MonoBehaviour {
 		yield return new WaitForSeconds (lifetime);
 
 		if (doDeathSpawns) {
-			SpawnOnDeathUtil.DoSpawnsOnDeath (gameObject, null);
+			gameObject.SendBlip(Blip.Type.DIED);
 		}
 
 		GameObject.Destroy (gameObject);

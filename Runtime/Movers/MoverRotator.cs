@@ -1,17 +1,44 @@
 ﻿/************************************************************
- * 
+ *
  *                     Mover Rotator
  *                 2016 Slonersoft Games
- * 
+ *
  * Continually rotates around each of the 3 axes according to
  * the rotateVector.
- * 
+ *
  ************************************************************/
 
 using UnityEngine;
+using UnityEditor;
 using System.Collections;
 
 public class MoverRotator : Mover {
+
+	[MenuItem("Slonersoft/Randomize/Rotation")]
+	static void RandomizeSelectionRotation() {
+		foreach (GameObject o in Selection.gameObjects) {
+			o.transform.RotateAround(o.transform.position, Vector3.forward, Random.Range(-180f, 180f));
+		}
+	}
+
+	[MenuItem("Slonersoft/Randomize/Scale")]
+	static void RandomizeSelectionScale() {
+		foreach (GameObject o in Selection.gameObjects) {
+			Vector3 newScale = o.transform.localScale;
+			newScale.Scale(new Vector3(Random.Range(.9f, 1.1f), Random.Range(0.9f, 1.1f), 1f));
+			o.transform.localScale = newScale;
+		}
+	}
+
+	[MenuItem("Slonersoft/Randomize/Sprite Order")]
+	static void RandomizeSpriteOrder() {
+		foreach (GameObject o in Selection.gameObjects) {
+			SpriteRenderer renderer = o.GetComponent<SpriteRenderer>();
+			if (renderer) {
+				renderer.sortingOrder = Random.Range(0,50);
+			}
+		}
+	}
 
 	[Tooltip("Each axis can have a different amount of rotation.")]
 	public Vector3 rotateVector;
@@ -50,9 +77,7 @@ public class MoverRotator : Mover {
 		if (localRotation) {
 			moverTransform.Rotate (finalRotation * Time.deltaTime);
 		} else {
-			moverTransform.RotateAround (moverTransform.position, Vector3.right, finalRotation.x * Time.deltaTime);
-			moverTransform.RotateAround (moverTransform.position, Vector3.up, finalRotation.y * Time.deltaTime);
-			moverTransform.RotateAround (moverTransform.position, Vector3.forward, finalRotation.z * Time.deltaTime);
+			moverTransform.Rotate(finalRotation * Time.deltaTime);
 		}
 	}
 

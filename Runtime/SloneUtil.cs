@@ -107,21 +107,6 @@ public static class SloneUtil
 	}
 
 	/// <summary>
-	/// Rotate the position around an arbitrary axis.
-	/// </summary>
-	/// <param name="position">the position to do the rotating</param>
-	/// <param name="center">the center around which to rotate</param>
-	/// <param name="axis">the axis around which to rotate.</param>
-	/// <param name="angle">the angle of rotation in degrees.</param>
-	/// <returns></returns>
-	public static Vector3 RotateAround(this Vector3 position, Vector3 center, Vector3 axis, float angle)
-	{
-		Quaternion rot = Quaternion.AngleAxis (angle, axis);
-		Vector3 dir = position - center;
-		return rot * dir;
-	}
-
-	/// <summary>
 	/// Returns true if xform is ahead of target (According to transform/fwd vector)
 	/// </summary>
 	/// <param name="xform">source transform</param>
@@ -143,6 +128,35 @@ public static class SloneUtil
 	/// <returns>True if it's within the threshold, false otherwise.</returns>
 	public static bool IsAheadOf(this GameObject obj, GameObject target)  {
 		return obj.transform.IsAheadOf (target.transform);
+	}
+
+	/// <summary>
+	/// Rotate the point around the specified pivot.
+	/// Source: https://answers.unity.com/questions/532297/rotate-a-vector-around-a-certain-point.html
+	/// </summary>
+	/// <param name="point">position to rotate</param>
+	/// <param name="pivot">where to rotate it around</param>
+	/// <param name="angles">euler angles to rotate it</param>
+	/// <returns>Rotated point.</returns>
+	public static Vector3 RotateAround(this Vector3 point, Vector3 pivot, Vector3 angles) {
+		Vector3 dir = point - pivot; // get point direction relative to pivot
+		dir = Quaternion.Euler(angles) * dir; // rotate it
+		point = dir + pivot; // calculate rotated point
+		return point; // return it
+	}
+
+	/// <summary>
+	/// Rotate the point around the specified pivot.
+	/// Source: https://answers.unity.com/questions/532297/rotate-a-vector-around-a-certain-point.html
+	/// </summary>
+	/// <param name="point">position to rotate</param>
+	/// <param name="pivot">where to rotate it around</param>
+	/// <param name="angles">z-axis degrees of rotation</param>
+	/// <returns>Rotated point.</returns>
+	public static Vector2 RotateAround(this Vector2 point, Vector2 pivot, float angle) {
+		Vector3 newPos = (new Vector3(point.x, point.y, 0f)).RotateAround(pivot, new Vector3(0f, 0f, angle));
+		point = newPos;
+		return point;
 	}
 
 	/// <summary>
@@ -226,6 +240,12 @@ public static class SloneUtil
 		dat.lifetime = timeSec;
 	}
 
+	public static void DoAfterTime(this GameObject gameObject, float timeSec, DoAfterTime.DelayedAction action) {
+		DoAfterTime dat = gameObject.AddComponent<DoAfterTime>();
+		dat.lifetime = timeSec;
+		dat.action = action;
+	}
+
 	/// <summary>
 	/// Waits for button(s) press.  Has optional timeout.
 	/// </summary>
@@ -262,44 +282,6 @@ public static class SloneUtil
 			val = val < goal ? goal : val;
 		}
 		return val;
-	}
-
-	// Turn toward something by rotating only around the z axis.
-	// t: transfrom to rotate toward the provided point.
-	// focalPoint: The point to rotate toward.
-	// degreesPerSec: Speed in degrees/sec at which we rotate toward the target. (Default: -1, immediate)
-	//
-	public static bool TurnToPoint2D(this Transform t, Vector3 focalPoint, float degreesPerSec = -1f)
-	{
-		Vector3 flatForward = new Vector3 (t.forward.x, t.forward.y, 0f);
-		if (flatForward == Vector3.zero) {
-			return false;
-		}
-
-		flatForward.Normalize ();
-
-		Vector3 goalForwardRaw = focalPoint - t.position;
-		goalForwardRaw = new Vector3 (goalForwardRaw.x, goalForwardRaw.y, 0f);
-		if (goalForwardRaw == Vector3.zero) {
-			return false;
-		}
-
-		Vector3 goalForwardNorm = goalForwardRaw.normalized;
-
-		float currentAngle = Vector3.Angle (Vector3.right, flatForward) * Mathf.Sign(flatForward.y);
-		float goalAngle = Vector3.Angle (Vector3.right, goalForwardNorm) * Mathf.Sign(goalForwardNorm.y);
-
-		float maxChange = Mathf.DeltaAngle (currentAngle, goalAngle);
-		float changeThisFrame = maxChange;
-
-		// Negative max degrees per sec means do it immediately.
-		if (degreesPerSec >= 0f) {
-			changeThisFrame = Mathf.Clamp (maxChange, -degreesPerSec * Time.deltaTime, degreesPerSec * Time.deltaTime);
-		}
-
-		t.RotateAround (t.position, Vector3.forward, changeThisFrame);
-
-		return maxChange == Mathf.Abs(changeThisFrame);
 	}
 
 	// Call this every frame on a transform to turn it such that the forward-vector will
@@ -625,6 +607,10 @@ public static class SloneUtil
 			cam = Camera.main;
 		}
 
+		if (cam.orthographic) {
+			return 2f * ((Vector2.up * cam.orthographicSize) + (cam.aspect * cam.orthographicSize * Vector2.right));
+		}
+
 		float height = 2.0f * distance * Mathf.Tan(cam.fieldOfView * 0.5f * Mathf.Deg2Rad);
 		float width = height * cam.aspect;
 		return new Vector2 (width, height);
@@ -640,6 +626,11 @@ public static class SloneUtil
 	{
 		if (cam == null) {
 			cam = Camera.main;
+		}
+
+		// No math for orthographic.
+		if (cam.orthographic) {
+			return fromPoint;
 		}
 
 		float projectionScalar = GetCameraPlaneProjectionScalar (fromPoint, toDistance, cam);
@@ -708,6 +699,21 @@ public static class SloneUtil
 		}
 
 		return list [list.Count - 1];
+	}
+
+	/// <summary>
+	/// Get the component if it exists.  If it doesn't, create it, and return that.
+	/// </summary>
+	/// <param name="gameObject">Gameobject where the component will live.</param>
+	/// <typeparam name="T">Type of game object to retrieve.</typeparam>
+	/// <returns>Unity Engine Component</returns>
+	public static T GetOrAddComponent<T>(this GameObject gameObject) where T : UnityEngine.Component {
+		T component = gameObject.GetComponent<T>();
+		if (component != null) {
+			return component;
+		}
+
+		return gameObject.AddComponent<T>();
 	}
 
 	// Creates a new component on the object copied from original.

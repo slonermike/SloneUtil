@@ -1,0 +1,7 @@
+{
+  "name": "com.slonersoft.slone-util",
+  "version": "0.0.1",
+  "displayName": "SloneUtil",
+  "description": "Lots of little helpers for unity in 2d and 3d games.",
+  "unity": "2020.1"
+}

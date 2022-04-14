@@ -31,6 +31,7 @@ public class AssetPool : MonoBehaviour {
 	private Dictionary<string, GameObject> dictionary = new Dictionary<string, GameObject> ();
 
 	public AudioClip[] soundAssets;
+	public int soundPoolSize = 25;
 	private Dictionary<string, AudioClip> audioDictionary = new Dictionary<string, AudioClip> ();
 
 	static Dictionary<AssetPoolType, AssetPool> _pools;
@@ -57,6 +58,17 @@ public class AssetPool : MonoBehaviour {
 				}
 			}
 			return _pools;
+		}
+	}
+
+	private Slonersoft.ObjectPool<AudioSource> audioSourcePool;
+
+	void Awake() {
+		if (type == AssetPoolType.GAMEWIDE) {
+			GameObject basePrefab = new GameObject("Audio Source");
+			basePrefab.AddComponent<AudioSource>();
+			audioSourcePool = new Slonersoft.ObjectPool<AudioSource>(basePrefab, soundPoolSize);
+			GameObject.Destroy(basePrefab);
 		}
 	}
 
@@ -122,11 +134,19 @@ public class AssetPool : MonoBehaviour {
 			return null;
 		}
 
-		GameObject o = new GameObject ("Sound: " + clip.name);
-		AudioSource s = o.AddComponent<AudioSource> ();
+		return PlayAudio(clip);
+	}
+
+	public static AudioSource PlayAudio(AudioClip clip, GameObject onObject = null) {
+		AudioSource s = pools[AssetPoolType.GAMEWIDE].audioSourcePool.Allocate();
+		GameObject o = s.gameObject;
 
 		if (onObject == null) {
 			onObject = Camera.main.gameObject;
+		} else {
+			onObject.ListenForBlips(Blip.Type.DIED, delegate() {
+				if (o) o.transform.SetParent(null);
+			});
 		}
 
 		o.transform.SetParent (onObject.transform);
@@ -134,7 +154,9 @@ public class AssetPool : MonoBehaviour {
 		o.transform.rotation = Quaternion.identity;
 
 		s.PlayOneShot (clip);
-		o.DestroyAfterTime (clip.length);
+		o.DoAfterTime (clip.length, delegate() {
+			pools[AssetPoolType.GAMEWIDE].audioSourcePool.Free(s);
+		});
 
 		return s;
 	}

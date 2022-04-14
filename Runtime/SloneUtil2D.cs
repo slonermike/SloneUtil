@@ -170,6 +170,33 @@ public static class SloneUtil2D
 		return true;
 	}
 
+	/// <summary>
+	/// Get the vector rotated 90 degrees clockwise.
+	/// </summary>
+	public static Vector2 GetRight(this Vector2 src) {
+		return new Vector2(src.y, -src.x);
+	}
+
+	/// <summary>
+	/// Returns the angle from this vector to that one, positive if the 'to' angle is
+	/// counterclockwise from the 'from' angle.
+	/// </summary>
+	/// <param name="fromVec">Vector we're starting from.</param>
+	/// <param name="toVec">Vector we're rotating toward.</param>
+	/// <returns></returns>
+	public static float AngleSigned(this Vector2 fromVec, Vector2 toVec) {
+		return Vector2.Angle(fromVec, toVec) * -Mathf.Sign(Vector2.Dot(toVec, fromVec.GetRight()));
+	}
+
+	/// <summary>
+	/// Create a quaternion for 2d via the right vector.
+	/// </summary>
+	/// <param name="right">Vector pointing to the right of the desired rotation.</param>
+	/// <returns></returns>
+	public static Quaternion RotationFromRightVec(Vector2 right) {
+		return Quaternion.FromToRotation (Vector3.right, right);
+	}
+
 	// Call this every frame on a transform to turn it such that the right-vector will
 	// eventually face focalPoint.
 	//
@@ -196,7 +223,7 @@ public static class SloneUtil2D
 		float maxAngleChange = degreesPerSec * Time.deltaTime;
 
 		// If we have less angle to go than what we're allowed this frame, we've arrived.
-		bool arrived = maxAngleChange <= angleToFocalPt;
+		bool arrived = angleToFocalPt <= maxAngleChange;
 
 		// Apply a cap to the rotation, so we obey the maximum turn speed.
 		angleToFocalPt = Mathf.Min (maxAngleChange, angleToFocalPt);
@@ -250,6 +277,25 @@ public static class SloneUtil2D
 		float halfAngle = angleRange * 0.5f;
 		float angleOut = UnityEngine.Random.Range(-halfAngle, halfAngle);
 		return Quaternion.AngleAxis (angleOut, Vector3.forward) * angleCenter;
+	}
+
+	/// <summary>
+	/// Get the squared distance between this point and another point.
+	/// </summary>
+	/// <param name="from">the starting point of the distance.</param>
+	/// <param name="to">the ending point of the distance.</param>
+	/// <returns>Distance (in units) between points, squared.</returns>
+	public static float DistanceSquared2D(this Vector3 from, Vector3 to)
+	{
+		Vector3 diff = to - from;
+		return (diff.x * diff.x) + (diff.y * diff.y);
+	}
+
+	/// <summary>
+	/// Flatten the vector to have a z axis value of zero.
+	/// </summary>
+	public static Vector3 GetFlattenedVec(this Vector3 vec) {
+		return new Vector3(vec.x, vec.y, 0f);
 	}
 
 	// Get the world-space vector from this point to the nearest point onscreen that maintains
