@@ -653,6 +653,21 @@ namespace Slonersoft.SloneUtil.Core
 			return true;
 		}
 
+		// Returns true if the world position appears on any screen.
+		//
+		// pt: world position
+		// beyondPct: The percentage beyond the edge of the screen that we still consider onscreen.
+		//
+		public static bool IsPointOnAnyScreen(Vector3 pt, float beyondPct = 0f) {
+			foreach (Camera c in Camera.allCameras) {
+				if (c.IsPointOnscreen(pt, beyondPct)) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		// Get the last item in a list.
 		//
 		public static T Last<T>(this List<T> list)

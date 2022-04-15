@@ -1,6 +1,7 @@
 {
-    "name": "Slonersoft.SloneUtil.BlipKit",
+    "name": "Slonersoft.SloneUtil.WarKit",
     "references": [
+        "GUID:f353eabf4fe1647d8ae5b02866131008",
         "GUID:c510c3f30ccc547fea9684502c46074c"
     ],
     "includePlatforms": [],

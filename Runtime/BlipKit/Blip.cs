@@ -11,7 +11,8 @@ namespace Slonersoft.SloneUtil.BlipKit {
             CREATED,
             ARRIVED,
             ACTIVATE,
-            DEACTIVATE
+            DEACTIVATE,
+            FORCE
         }
     }
 
@@ -20,6 +21,14 @@ namespace Slonersoft.SloneUtil.BlipKit {
         public GameObject destroyedObject;
         public BlipDestroy(GameObject o) {
             destroyedObject = o;
+        }
+    }
+
+    public class BlipForce : Blip {
+        public Vector3 addedVelocity;
+
+        public BlipForce(Vector3 velToAdd) {
+            addedVelocity = velToAdd;
         }
     }
 
