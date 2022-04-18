@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Slonersoft.SloneUtil.Core;
 
-namespace Slonersoft.SloneUtil.Movers {
+namespace Slonersoft.SloneUtil.Materials {
 	public class MaterialColorChanger : MonoBehaviour {
 
 		public SharedMaterialInstance sharedMaterialInstance;

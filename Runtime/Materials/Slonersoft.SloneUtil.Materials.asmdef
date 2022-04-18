@@ -1,0 +1,15 @@
+{
+    "name": "Slonersoft.SloneUtil.Materials",
+    "references": [
+        "GUID:c510c3f30ccc547fea9684502c46074c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

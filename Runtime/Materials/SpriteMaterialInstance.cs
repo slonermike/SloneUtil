@@ -1,9 +1,9 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Slonersoft.SloneUtil.Movers {
-public class SpriteMaterialInstance : MonoBehaviour {
+namespace Slonersoft.SloneUtil.Materials {
+  public class SpriteMaterialInstance : MonoBehaviour {
 			public List<SpriteRenderer> renderers = new List<SpriteRenderer>();
 		Material instancedMaterial;
 
@@ -39,40 +39,6 @@ public class SpriteMaterialInstance : MonoBehaviour {
 		public void SetAlpha(float alpha) {
 			Color prevColor = GetMaterialInstance().color;
 			GetMaterialInstance().color = new Color(prevColor.r, prevColor.g, prevColor.b, alpha);
-		}
-	}
-
-	public class SharedMaterialInstance : MonoBehaviour {
-
-		public Renderer[] objects;
-		Material instancedMaterial;
-
-		public Material GetMaterialInstance ()
-		{
-			InstanceMaterial ();
-			return instancedMaterial;
-		}
-
-		void InstanceMaterial()
-		{
-			if (instancedMaterial != null) {
-				return;
-			}
-
-			if (objects.Length <= 0) {
-				return;
-			}
-
-			instancedMaterial = Material.Instantiate (objects [0].sharedMaterial);
-
-			foreach (Renderer r in objects) {
-				r.sharedMaterial = instancedMaterial;
-			}
-		}
-
-		void Awake()
-		{
-			InstanceMaterial ();
 		}
 	}
 }

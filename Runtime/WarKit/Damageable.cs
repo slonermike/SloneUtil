@@ -299,6 +299,8 @@ namespace Slonersoft.SloneUtil.WarKit {
 					int weaponLayerMask = Physics2D.GetLayerCollisionMask(TeamUtil.GetTeamWeaponLayer(attackerTeam));
 					Vector3 toTarget = d.transform.position - t.position;
 					float toTargetLength = toTarget.magnitude;
+
+					// TODO: Make this also work in 3d.
 					RaycastHit2D hit = Physics2D.Raycast(t.position, toTarget / toTargetLength, toTargetLength, weaponLayerMask);
 					if (!hit) {
 						continue;

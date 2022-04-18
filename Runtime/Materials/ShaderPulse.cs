@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Slonersoft.SloneUtil.Movers {
+namespace Slonersoft.SloneUtil.Materials {
 	public class ShaderPulse : MonoBehaviour {
 		public float frequency = 1.0f;
 		public AnimationCurve glowCurve;
