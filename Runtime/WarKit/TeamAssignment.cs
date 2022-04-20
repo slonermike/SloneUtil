@@ -52,11 +52,13 @@ namespace Slonersoft.SloneUtil.WarKit {
 					string layerName = Enum.GetName (typeof(Team), team) + "_WEAPON";
 					_teamWeaponLayers [team] = LayerMask.NameToLayer (layerName);
 
-					#if DEBUG
 					if (_teamWeaponLayers[team] < 0) {
-						Debug.LogError("Could not find team weapon layer: " + layerName);
+						_teamWeaponLayers [team] = LayerMask.NameToLayer ("WEAPON");
+
+						if (_teamWeaponLayers[team] < 0) {
+							Debug.LogError("Could not find team weapon layer: " + layerName);
+						}
 					}
-					#endif
 				}
 			}
 

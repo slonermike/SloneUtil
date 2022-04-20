@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Slonersoft.SloneUtil.BlipKit;
 using Slonersoft.SloneUtil.Core;
 
 namespace Slonersoft.SloneUtil.WarKit {
@@ -55,7 +56,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 					}
 				}
 
-				destroyTarget.DoChildDetachments ();
+				destroyTarget.SendBlip(Blip.Type.DIED);
 				GameObject.Destroy (destroyTarget);
 			}
 		}

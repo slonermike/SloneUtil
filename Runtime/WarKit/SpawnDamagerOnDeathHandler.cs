@@ -18,7 +18,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 
 			GameObject killer = parentKiller ? parentKiller : parent;
 
-			ai_Base ai = killer.GetComponentInParent<ai_Base>();
+			Warrior ai = killer.GetComponentInParent<Warrior>();
 			if (ai != null) {
 				damager.owner = ai;
 			}

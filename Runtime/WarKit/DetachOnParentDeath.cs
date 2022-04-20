@@ -10,15 +10,16 @@ namespace Slonersoft.SloneUtil.WarKit {
 		[Tooltip("Set to a positive number to automatically destroy this a specified time after the parent dies.")]
 		public float destroyAfterTime = -1f;
 
-		public void OnParentDied()
-		{
-			transform.SetParent (null);
+		void Start() {
+			transform.parent.gameObject.ListenForBlips(Blip.Type.DIED, delegate() {
+				transform.SetParent (null);
 
-			if (destroyAfterTime > 0f) {
-				gameObject.DestroyAfterTime (destroyAfterTime);
-				FadeTrails ();
-				StopEmitters ();
-			}
+				if (destroyAfterTime > 0f) {
+					gameObject.DestroyAfterTime (destroyAfterTime);
+					FadeTrails ();
+					StopEmitters ();
+				}
+			});
 		}
 
 		void FadeTrails()
@@ -45,15 +46,4 @@ namespace Slonersoft.SloneUtil.WarKit {
 			}
 		}
 	}
-
-	public static class DeatchOnParentDeathUtil {
-		public static void DoChildDetachments(this GameObject o)
-		{
-			DetachOnParentDeath[] dods = o.GetComponentsInChildren<DetachOnParentDeath> ();
-			foreach (DetachOnParentDeath dod in dods) {
-				dod.OnParentDied ();
-			}
-		}
-	}
-
 }

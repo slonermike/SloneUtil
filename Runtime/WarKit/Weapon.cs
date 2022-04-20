@@ -8,8 +8,8 @@ namespace Slonersoft.SloneUtil.WarKit {
 		public GameObject crosshair;
 		protected TeamAssignment ownerTeam;
 
-		private ai_Base _owner;
-		public ai_Base owner {
+		private Warrior _owner;
+		public Warrior owner {
 			get {
 				return _owner;
 			}

@@ -6,7 +6,7 @@ using Slonersoft.SloneUtil.BlipKit;
 
 namespace Slonersoft.SloneUtil.WarKit {
 	public class BlipDamage : Blip {
-		public ai_Base attacker;
+		public Warrior attacker;
 		public WeaponDamager damager;
 		public float damageAmount;
 
@@ -27,7 +27,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 			}
 		}
 
-		public BlipDamage(float amount, ai_Base _attacker)
+		public BlipDamage(float amount, Warrior _attacker)
 		{
 			damageAmount = amount;
 			attacker = _attacker;
@@ -134,11 +134,11 @@ namespace Slonersoft.SloneUtil.WarKit {
 			}
 
 			Damageable d = coll.gameObject.GetComponent<Damageable> ();
-			ai_Base attacker = null;
+			Warrior attacker = null;
 			if (d != null) {
-				attacker = d.GetAi ();
+				attacker = d.GetWarrior ();
 			} else {
-				attacker = coll.gameObject.GetComponent<ai_Base> ();
+				attacker = coll.gameObject.GetComponent<Warrior> ();
 			}
 
 			// Only damage if you're touching an AI.
@@ -163,9 +163,9 @@ namespace Slonersoft.SloneUtil.WarKit {
 		public abstract float GetHealth();
 		public abstract float GetMaxHealth();
 
-		public virtual ai_Base GetAi()
+		public virtual Warrior GetWarrior()
 		{
-			return gameObject.GetComponent<ai_Base> ();
+			return gameObject.GetComponent<Warrior> ();
 		}
 
 		public virtual Damageable GetMaster()
@@ -196,7 +196,6 @@ namespace Slonersoft.SloneUtil.WarKit {
 		public virtual void Die(BlipDamage data)
 		{
 			gameObject.SendBlip(Blip.Type.DIED, data);
-			gameObject.DoChildDetachments ();
 
 			if (destroyOnDeath) {
 				GameObject.Destroy (gameObject);

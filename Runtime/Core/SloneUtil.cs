@@ -806,5 +806,15 @@ namespace Slonersoft.SloneUtil.Core
 			}
 			return String.Join(" ", strings);
 		}
+
+		public static LayerMask GetLayerCollisionMask(int layer) {
+			int layerMask = 0;
+			for (int i = 0; i < 32; i++) {
+				if(!Physics.GetIgnoreLayerCollision(layer, i))  {
+					layerMask = layerMask | 1 << i;
+				}
+			}
+			return layerMask;
+		}
 	}
 }

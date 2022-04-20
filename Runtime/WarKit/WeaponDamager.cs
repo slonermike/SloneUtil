@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
+using Slonersoft.SloneUtil.Core;
 
 namespace Slonersoft.SloneUtil.WarKit {
 	// The product of a weapon, such as a bullet or laser.
 	public class WeaponDamager : MonoBehaviour {
 
-		private ai_Base _owner;
-		public ai_Base owner {
+		private Warrior _owner;
+		public Warrior owner {
 			get {
 				return _owner;
 			}
@@ -21,12 +22,23 @@ namespace Slonersoft.SloneUtil.WarKit {
 			}
 		}
 
+		public bool is3D = false;
+
 		protected TeamAssignment ownerTeam;
 		protected LayerMask layerMask;
 		protected SpawnDamagerOnDeathHandler spawnHandler;
 
+		public void RefreshLayerMask() {
+			if (is3D) {
+				layerMask = CoreUtils.GetLayerCollisionMask (gameObject.layer);
+			} else {
+				layerMask = Physics2D.GetLayerCollisionMask (gameObject.layer);
+			}
+		}
+
 		virtual protected void Awake() {
 			spawnHandler = gameObject.AddComponent<SpawnDamagerOnDeathHandler>();
+			RefreshLayerMask();
 		}
 
 		public void SetTeam(Team t)
@@ -46,7 +58,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 				Debug.LogError ("WeaponDamager created by owner (" + _owner.name + ") with no team.");
 			}
 
-			layerMask = Physics2D.GetLayerCollisionMask (gameObject.layer);
+			RefreshLayerMask();
 		}
 
 		// Use this for initialization
