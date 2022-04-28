@@ -52,7 +52,7 @@ namespace Slonersoft.SloneUtil.WarKit {
         }
 
         void Update() {
-            bool allowCheck = sourceOffscreenPct < 0f || CoreUtils.IsPointOnAnyScreen(transform.position, sourceOffscreenPct);
+            bool allowCheck = !onscreenTargetsOnly || sourceOffscreenPct < 0f || CoreUtils.IsPointOnAnyScreen(transform.position, sourceOffscreenPct);
             if (allowCheck && nextSearchTime <= Time.time) {
                 Damageable exemptTarget = loseTargetViaRaycast ? null : damageableTarget;
                 damageableTarget = Damageable.GetTarget(transform, team, searchAngle, searchDistance, onscreenTargetsOnly, true, raycastCheck, exemptTarget);

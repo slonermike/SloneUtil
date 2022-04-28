@@ -9,15 +9,21 @@ namespace Slonersoft.SloneUtil.WarKit {
 		public Warrior attacker;
 		public WeaponDamager damager;
 		public float damageAmount;
+		public Vector3 damageLocation;
+		public Vector3 damageNormal;
 
 		public BlipDamage(float amount = 0f) {
 			damageAmount = amount;
 			attacker = null;
 			damager = null;
+			damageLocation = Vector3.zero;
+			damageNormal = new Vector3(0, 0, 1);
 		}
 
-		public BlipDamage(float amount, WeaponDamager src)
+		public BlipDamage(float amount, WeaponDamager src, Vector3 location, Vector3 normal)
 		{
+			damageLocation = location;
+			damageNormal = normal;
 			damageAmount = amount;
 			damager = src;
 			if (damager != null) {
@@ -27,8 +33,10 @@ namespace Slonersoft.SloneUtil.WarKit {
 			}
 		}
 
-		public BlipDamage(float amount, Warrior _attacker)
+		public BlipDamage(float amount, Warrior _attacker, Vector3 location, Vector3 normal)
 		{
+			damageLocation = location;
+			damageNormal = normal;
 			damageAmount = amount;
 			attacker = _attacker;
 			damager = null;
@@ -36,6 +44,8 @@ namespace Slonersoft.SloneUtil.WarKit {
 
 		public BlipDamage(BlipDamage data, float damageMultiplier = 1f)
 		{
+			damageLocation = data.damageLocation;
+			damageNormal = data.damageNormal;
 			damageAmount = data.damageAmount * damageMultiplier;
 			attacker = data.attacker;
 			damager = data.damager;
@@ -65,6 +75,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 
 		[Tooltip("True to take damage from touching other objects/enemies.")]
 		public bool damageOnTouchOthers = true;
+		public GameObject damageTakenPrefab;
 
 		Team _team = Team.NONE;
 
@@ -157,7 +168,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 				return;
 			}
 
-			DoDamage(new BlipDamage(GetHealth(), attacker));
+			DoDamage(new BlipDamage(GetHealth(), attacker, coll.contacts[0].point, coll.contacts[0].normal));
 		}
 
 		public abstract float GetHealth();
@@ -175,6 +186,11 @@ namespace Slonersoft.SloneUtil.WarKit {
 
 		protected void OnDamageTaken(BlipDamage data)
 		{
+			if (damageTakenPrefab) {
+				GameObject blood = CoreUtils.InstantiateChild(transform, damageTakenPrefab);
+				blood.transform.position = data.damageLocation;
+				blood.transform.rotation = Quaternion.LookRotation(data.damageNormal, transform.up);
+			}
 			gameObject.SendBlip(Blip.Type.DAMAGED, data);
 		}
 
@@ -254,12 +270,12 @@ namespace Slonersoft.SloneUtil.WarKit {
 			Damageable nearest = null;
 			float nearestDistSq = -1.0f;
 			float maxDistanceSq = maxDistance * maxDistance;
-			Vector2 pos = t.position;
+			Vector3 pos = t.position;
 
 			// TODO: does this need to work in 3d?
 			foreach (Damageable d in damageables) {
-				Vector2 dPos = d.transform.position;
-				Vector2 toDamageable = dPos - pos;
+				Vector3 dPos = d.transform.position;
+				Vector3 toDamageable = dPos - pos;
 
 				// No friendly fire.
 				if (d.team == attackerTeam) {
@@ -275,9 +291,11 @@ namespace Slonersoft.SloneUtil.WarKit {
 					continue;
 				}
 
+				Vector3 myFvec = WarKitSettings.is2D() ? t.right : t.forward;
+
 				// Check angle threshold if appropriate.
 				if (minDot >= 0f) {
-					float dot = Vector2.Dot (toDamageable.normalized, t.right);
+					float dot = Vector3.Dot (toDamageable.normalized, myFvec);
 					if (dot < minDot) {
 						continue;
 					}
@@ -295,19 +313,21 @@ namespace Slonersoft.SloneUtil.WarKit {
 
 				// No raycast checks for existing targets.
 				if (raycastCheck && d != raycastExemptTarget) {
-					int weaponLayerMask = Physics2D.GetLayerCollisionMask(TeamUtil.GetTeamWeaponLayer(attackerTeam));
-					Vector3 toTarget = d.transform.position - t.position;
-					float toTargetLength = toTarget.magnitude;
+					if (WarKitSettings.is2D()) {
+						int weaponLayerMask = Physics2D.GetLayerCollisionMask(TeamUtil.GetTeamWeaponLayer(attackerTeam));
+						Vector3 toTarget = d.transform.position - t.position;
+						float toTargetLength = toTarget.magnitude;
 
-					// TODO: Make this also work in 3d.
-					RaycastHit2D hit = Physics2D.Raycast(t.position, toTarget / toTargetLength, toTargetLength, weaponLayerMask);
-					if (!hit) {
-						continue;
-					}
+						// TODO: Make this also work in 3d.
+						RaycastHit2D hit = Physics2D.Raycast(t.position, toTarget / toTargetLength, toTargetLength, weaponLayerMask);
+						if (!hit) {
+							continue;
+						}
 
-					Damageable hitDamageable = hit.collider.gameObject.GetComponent<Damageable>();
-					if (hitDamageable == null || d != hitDamageable) {
-						continue;
+						Damageable hitDamageable = hit.collider.gameObject.GetComponent<Damageable>();
+						if (hitDamageable == null || d != hitDamageable) {
+							continue;
+						}
 					}
 				}
 

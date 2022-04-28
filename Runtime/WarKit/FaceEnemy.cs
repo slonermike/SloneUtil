@@ -18,10 +18,12 @@ namespace Slonersoft.SloneUtil.WarKit {
         }
 
         void FixedUpdate() {
-            // TODO: make it work in 3d.
-            // Should there be some global 2d/3d setting for these scripts?
             if (finder.targetDamageable) {
-                CoreUtils2D.TurnToPoint(transform, finder.targetDamageable.transform.position, turnSpeed);
+                if (WarKitSettings.is2D()) {
+                    CoreUtils2D.TurnToPoint(transform, finder.targetDamageable.transform.position, turnSpeed);
+                } else {
+                    CoreUtils.TurnToPoint(transform, finder.targetDamageable.transform.position, turnSpeed);
+                }
             }
         }
     }
