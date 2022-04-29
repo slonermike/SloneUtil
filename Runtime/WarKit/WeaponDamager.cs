@@ -22,14 +22,12 @@ namespace Slonersoft.SloneUtil.WarKit {
 			}
 		}
 
-		public bool is3D = false;
-
 		protected TeamAssignment ownerTeam;
 		protected LayerMask layerMask;
 		protected SpawnDamagerOnDeathHandler spawnHandler;
 
 		public void RefreshLayerMask() {
-			if (is3D) {
+			if (WarKitSettings.is3D()) {
 				layerMask = CoreUtils.GetLayerCollisionMask (gameObject.layer);
 			} else {
 				layerMask = Physics2D.GetLayerCollisionMask (gameObject.layer);
