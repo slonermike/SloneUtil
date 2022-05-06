@@ -75,6 +75,11 @@ namespace Slonersoft.SloneUtil.WarKit {
 
 		[Tooltip("True to take damage from touching other objects/enemies.")]
 		public bool damageOnTouchOthers = true;
+
+		[Tooltip("True to automatically create damage delegates in children with colliders")]
+		public bool takeDamageFromChildColliders = true;
+
+		[Tooltip("Object to spawn at position of taken damage.")]
 		public GameObject damageTakenPrefab;
 
 		Team _team = Team.NONE;
@@ -125,7 +130,30 @@ namespace Slonersoft.SloneUtil.WarKit {
 
 		protected virtual void Start()
 		{
+			if (takeDamageFromChildColliders) {
+				List<GameObject> childObjects = new List<GameObject>();
+				if (WarKitSettings.is3D()) {
+					Collider[] colliders = gameObject.GetComponentsInChildren<Collider>();
+					foreach (Collider c in colliders) {
+						childObjects.Add(c.gameObject);
+					}
+				} else {
+					Collider2D[] colliders = gameObject.GetComponentsInChildren<Collider2D>();
+					foreach (Collider2D c in colliders) {
+						childObjects.Add(c.gameObject);
+					}
+				}
 
+				foreach (GameObject o in childObjects) {
+					DamageDelegate d = o.GetOrAddComponent<DamageDelegate>();
+					if (d.master != null && d.master != this) {
+						Debug.LogError($"Attempting to auto-add damage delegates, but the child ({d.name}) is already delegated to something else! ({d.master.name})");
+					} else {
+						d.master = this;
+						d.takeDamageFromChildColliders = false;
+					}
+				}
+			}
 		}
 
 		void OnEnable()

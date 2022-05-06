@@ -19,16 +19,27 @@ namespace Slonersoft.SloneUtil.Movers {
 
 		[Tooltip("Rate at which the velocity drops to zero.")]
 		public float damping = 0f;
+		private Rigidbody rb;
+
+		void Start() {
+			rb = GetComponent<Rigidbody>();
+		}
 
 		// Update is called once per frame
 		void Update () {
 			if (damping > 0f) {
 				velocity = CoreUtils.AdvanceValue(velocity, Vector3.zero, damping);
 			}
+
+			Vector3 curVelocity = velocity;
 			if (useLocalAxes) {
-				moverTransform.position += (velocity.x * moverTransform.right) + (velocity.y * moverTransform.up) + (velocity.z * moverTransform.forward) * Time.deltaTime;
+				curVelocity = (velocity.x * moverTransform.right) + (velocity.y * moverTransform.up) + (velocity.z * moverTransform.forward);
+			}
+
+			if (rb != null) {
+				rb.velocity = curVelocity;
 			} else {
-				moverTransform.position += velocity * Time.deltaTime;
+				moverTransform.position += curVelocity * Time.deltaTime;
 			}
 		}
 	}

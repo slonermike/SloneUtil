@@ -8,6 +8,7 @@ namespace Slonersoft.SloneUtil.WarKit {
     {
         public float turnSpeed = 90f;
         const float RE_EVALUATE_TIME = 0.5f;
+        public bool flattenDirection = true;
 
         TargetFinder finder;
 
@@ -22,7 +23,8 @@ namespace Slonersoft.SloneUtil.WarKit {
                 if (WarKitSettings.is2D()) {
                     CoreUtils2D.TurnToPoint(transform, finder.targetDamageable.transform.position, turnSpeed);
                 } else {
-                    CoreUtils.TurnToPoint(transform, finder.targetDamageable.transform.position, turnSpeed);
+                    Vector3 toTarget = Vector3.ProjectOnPlane(finder.targetDamageable.transform.position - transform.position, transform.up);
+                    CoreUtils.TurnToPoint(transform, transform.position + toTarget, turnSpeed);
                 }
             }
         }

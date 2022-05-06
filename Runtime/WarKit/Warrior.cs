@@ -21,7 +21,7 @@ namespace Slonersoft.SloneUtil.WarKit {
         public Transform muzzleTransform;
 
         [Tooltip("Weapon to give the character if he has none.")]
-            public List<WeaponAssignment> defaultWeapons;
+        public List<WeaponAssignment> defaultWeapons;
 
         protected List<Weapon> weapons;
 
@@ -82,6 +82,10 @@ namespace Slonersoft.SloneUtil.WarKit {
             if (weapons[(int)slot] != null) {
                 weapons[(int)slot].ReleaseTrigger ();
             }
+        }
+
+        public Weapon GetWeapon(WeaponSlots slot = WeaponSlots.PRIMARY) {
+            return weapons[(int)slot];
         }
 	}
 }
