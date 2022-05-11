@@ -13,6 +13,7 @@ using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq; // for array.aggregate
 
 namespace Slonersoft.SloneUtil.Core
 {
@@ -531,6 +532,16 @@ namespace Slonersoft.SloneUtil.Core
 		{
 			return (T) Enum.Parse(typeof(T), value, true);
 		}
+
+		// Create a bitwise flag integer from a list of flags.
+		//
+		// flags: array of the enums that will be included in the bitwise field.
+		//
+		public static int EnumToBitwiseFlags<T>(T[] flags) where T : System.Enum {
+        return flags.Aggregate(0, (acc, val) => {
+            return acc |= (1 << (int)(object)val);
+        });
+    }
 
 		// Instantiate one object as a child of another.
 		//
