@@ -8,6 +8,7 @@ namespace Slonersoft.SloneUtil.WarKit {
     /// <summary>
     /// Finds viable damageable targets based on team assignment.
     /// </summary>
+    [RequireComponent(typeof(TeamAssignment))]
     public class TargetFinder : Targeting
     {
         [Tooltip("Time from one target search till the next")]
