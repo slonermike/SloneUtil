@@ -70,7 +70,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 				return Team.NONE;
 			}
 
-			return master.gameObject.GetTeam (true);
+			return master.gameObject.GetTeam (false);
 		}
 
 		public override Damageable GetMaster()

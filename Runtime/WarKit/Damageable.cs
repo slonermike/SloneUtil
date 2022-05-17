@@ -13,6 +13,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 		public Vector3 damageNormal;
 
 		public BlipDamage(float amount = 0f) {
+			isNoOp = amount == 0f;
 			damageAmount = amount;
 			attacker = null;
 			damager = null;
@@ -22,6 +23,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 
 		public BlipDamage(float amount, WeaponDamager src, Vector3 location, Vector3 normal)
 		{
+			isNoOp = amount == 0f;
 			damageLocation = location;
 			damageNormal = normal;
 			damageAmount = amount;
@@ -35,6 +37,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 
 		public BlipDamage(float amount, Warrior _attacker, Vector3 location, Vector3 normal)
 		{
+			isNoOp = amount == 0f;
 			damageLocation = location;
 			damageNormal = normal;
 			damageAmount = amount;
@@ -44,6 +47,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 
 		public BlipDamage(BlipDamage data, float damageMultiplier = 1f)
 		{
+			isNoOp = data.isNoOp;
 			damageLocation = data.damageLocation;
 			damageNormal = data.damageNormal;
 			damageAmount = data.damageAmount * damageMultiplier;
@@ -146,57 +150,60 @@ namespace Slonersoft.SloneUtil.WarKit {
 
 				foreach (GameObject o in childObjects) {
 					DamageDelegate d = o.GetOrAddComponent<DamageDelegate>();
-					if (d.master != null && d.master != this) {
-						Debug.LogError($"Attempting to auto-add damage delegates, but the child ({d.name}) is already delegated to something else! ({d.master.name})");
-					} else {
+					if (d.master == null) {
 						d.master = this;
 						d.takeDamageFromChildColliders = false;
+						d.damageOnTouchOthers = damageOnTouchOthers;
 					}
 				}
 			}
 		}
 
-		void OnEnable()
+		protected virtual void OnEnable()
 		{
 			damageables.AddLast (this);
 		}
 
-		void OnDisable()
+		protected virtual void OnDisable()
 		{
 			damageables.Remove (this);
 		}
 
-		void OnCollisionEnter2D(Collision2D coll) {
-
-			if (!damageOnTouchOthers) {
-				return;
-			}
-
-			Damageable d = coll.gameObject.GetComponent<Damageable> ();
+		// Respond to collision with another damageable.
+		public void OnCollision(GameObject o, Vector3 point, Vector3 normal) {
+			Damageable d = o.GetComponent<Damageable> ();
 			Warrior attacker = null;
 			if (d != null) {
 				attacker = d.GetWarrior ();
 			} else {
-				attacker = coll.gameObject.GetComponent<Warrior> ();
-			}
-
-			// Only damage if you're touching an AI.
-			if (attacker == null) {
-				return;
+				attacker = o.GetComponent<Warrior> ();
 			}
 
 			Team t;
 			if (d != null) {
 				t = d.GetTeam ();
 			} else {
-				t = coll.gameObject.GetTeam (false);
+				t = o.GetTeam (false);
 			}
 
 			if (t == team || t == Team.NONE) {
 				return;
 			}
 
-			DoDamage(new BlipDamage(GetHealth(), attacker, coll.contacts[0].point, coll.contacts[0].normal));
+			DoDamage(new BlipDamage(GetHealth(), attacker, point, normal));
+		}
+
+		void OnCollisionEnter2D(Collision2D coll) {
+			if (damageOnTouchOthers) {
+				OnCollision(coll.gameObject, coll.contacts[0].point, coll.contacts[0].normal);
+			}
+		}
+
+		void OnCollisionEnter(Collision coll) {
+			Debug.Log($"{name} Entered collision with {coll.gameObject.name}");
+			if (damageOnTouchOthers) {
+				OnCollision(coll.gameObject, coll.contacts[0].point, coll.contacts[0].normal);
+			}
 		}
 
 		public abstract float GetHealth();

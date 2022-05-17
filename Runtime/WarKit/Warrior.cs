@@ -51,7 +51,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 
         // Give the weapon object
         //
-        public void GiveWeapon(GameObject weaponPrefab, WeaponSlots slot = WeaponSlots.PRIMARY)
+        public virtual void GiveWeapon(GameObject weaponPrefab, WeaponSlots slot = WeaponSlots.PRIMARY)
         {
             // Get rid of the old weapon.
             if (weapons[(int)slot] != null) {

@@ -24,7 +24,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 			TeamAssignment t = o.GetComponent<TeamAssignment> ();
 			if (t == null) {
 				if (required) {
-					Debug.LogError ("Object " + o.name + " needs a team assignment.");
+					Debug.LogWarning("Object " + o.name + " needs a team assignment.");
 				}
 				return Team.NONE;
 			}

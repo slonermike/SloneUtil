@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Slonersoft.SloneUtil.BlipKit {
     public abstract class Blip {
+        public bool isNoOp = false;
         public enum Type {
             DAMAGED,
             DIED,
@@ -44,49 +45,45 @@ namespace Slonersoft.SloneUtil.BlipKit {
         public delegate void Handler(Blip data);
         public delegate void BlindHandler();
 
-        private class HandlerSet {
-            public HandlerSet(Handler h) {
-                handler = h;
-                blindHandler = null;
-            }
-            public HandlerSet(BlindHandler h) {
-                blindHandler = h;
-                handler = null;
-            }
-            public Handler handler;
-            public BlindHandler blindHandler;
-        }
+        private Dictionary<Blip.Type, Handler> handlers = new Dictionary<Blip.Type, Handler>();
+        private Dictionary<Blip.Type, BlindHandler> blindHandlers = new Dictionary<Blip.Type, BlindHandler>();
 
-        private Dictionary<Blip.Type, List<HandlerSet>> handlerList = new Dictionary<Blip.Type, List<HandlerSet>>();
 
         public void RegisterHandler(Blip.Type eventName, Handler handler) {
-            if (!handlerList.ContainsKey(eventName)) {
-                handlerList[eventName] = new List<HandlerSet>();
+            if (!handlers.ContainsKey(eventName)) {
+                handlers[eventName] = handler;
+            } else {
+                handlers[eventName] += handler;
             }
+        }
 
-            handlerList[eventName].Add(new HandlerSet(handler));
+        public void UnregisterHandler(Blip.Type eventName, Handler handler) {
+            if (handlers.ContainsKey(eventName)) {
+                handlers[eventName] -= handler;
+            }
         }
 
         public void RegisterHandler(Blip.Type eventName, BlindHandler handler) {
-            if (!handlerList.ContainsKey(eventName)) {
-                handlerList[eventName] = new List<HandlerSet>();
+            if (!blindHandlers.ContainsKey(eventName)) {
+                blindHandlers[eventName] = handler;
+            } else {
+                blindHandlers[eventName] += handler;
             }
+        }
 
-            handlerList[eventName].Add(new HandlerSet(handler));
+        public void UnregisterHandler(Blip.Type eventName, BlindHandler handler) {
+            if (blindHandlers.ContainsKey(eventName)) {
+                blindHandlers[eventName] -= handler;
+            }
         }
 
         public void Send(Blip.Type type, Blip data = null) {
-            if (!handlerList.ContainsKey(type)) {
-                return;
+            if (handlers.ContainsKey(type)) {
+                handlers[type](data);
             }
-
-            handlerList[type].ForEach(delegate(HandlerSet set) {
-                if (set.blindHandler != null) {
-                    set.blindHandler();
-                } else {
-                    set.handler(data);
-                }
-            });
+            if (blindHandlers.ContainsKey(type)) {
+                blindHandlers[type]();
+            }
         }
 
         public void OnDestroy() {
@@ -106,10 +103,24 @@ namespace Slonersoft.SloneUtil.BlipKit {
             listener.RegisterHandler(blipType, handler);
         }
 
+        public static void RemoveBlipListener(this GameObject o, Blip.Type blipType, BlipListener.Handler handler) {
+            BlipListener listener = o.GetComponent<BlipListener>();
+            if (listener) {
+                listener.UnregisterHandler(blipType, handler);
+            }
+        }
+
         public static void ListenForBlips(this GameObject o, Blip.Type blipType, BlipListener.BlindHandler handler) {
             BlipListener listener = o.GetComponent<BlipListener>();
             if (!listener) listener = o.AddComponent<BlipListener>();
             listener.RegisterHandler(blipType, handler);
+        }
+
+        public static void RemoveBlipListener(this GameObject o, Blip.Type blipType, BlipListener.BlindHandler handler) {
+            BlipListener listener = o.GetComponent<BlipListener>();
+            if (listener) {
+                listener.UnregisterHandler(blipType, handler);
+            }
         }
     }
 

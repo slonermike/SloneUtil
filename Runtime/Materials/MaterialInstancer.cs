@@ -13,7 +13,6 @@ namespace Slonersoft.SloneUtil.Materials {
         private Renderer[] renderers;
         void Awake() {
             renderers = GetComponentsInChildren<Renderer>();
-            Debug.Log($"Num Renderers: {renderers.Length}");
             foreach (Renderer r in renderers) {
                 var commonMaterial = r.sharedMaterial;
                 if (!mapToInstance.ContainsKey(commonMaterial)) {
