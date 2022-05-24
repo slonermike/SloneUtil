@@ -17,9 +17,6 @@ namespace Slonersoft.SloneUtil.WarKit {
 		[Tooltip("Number of objects to spawn.")]
 		public int numToSpawn = 1;
 
-		[Tooltip("(optional) Position to point objects away from.")]
-		public Transform pointAwayFrom;
-
 		[Tooltip("(optional) Specific positions for spawning.")]
 		public Transform[] spawnPositions;
 
@@ -36,8 +33,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 
 		void Awake() {
 			gameObject.ListenForBlips(Blip.Type.DIED, delegate(Blip data) {
-				BlipDamage deathData = data as BlipDamage;
-				DoSpawn(deathData.GetAttackerObj());
+				DoSpawn(data != null ? (data as BlipDamage).GetAttackerObj() : null);
 			});
 		}
 
@@ -62,9 +58,11 @@ namespace Slonersoft.SloneUtil.WarKit {
 
 			bool fullcircle = Mathf.DeltaAngle(minAngle, maxAngle) == 0f;
 
-			// HACK: make it possible to rotate the offset around the center.
-			if (numToSpawn > 1 && spawnRadius <= 0f) {
-				spawnRadius = 0.01f;
+			// If this is a damager that got killed by a warrior, they now own all damage done by this and subsequent damagers.
+			WeaponDamager originalDamager = GetComponent<WeaponDamager>();
+			Warrior killerWarrior = originalDamager != null && killer != null ? killer.GetComponent<Warrior>() : null;
+			if (originalDamager && killerWarrior) {
+				originalDamager.owner = killerWarrior;
 			}
 
 			Quaternion spawnOrient = transform.rotation;
@@ -74,32 +72,26 @@ namespace Slonersoft.SloneUtil.WarKit {
 				if (spawnPositions.Length > 0) {
 					spawnPosition = spawnPositions[i%spawnPositions.Length].position;
 					spawnOrient = spawnPositions[i%spawnPositions.Length].rotation;
-				} else if (spawnRadius > 0f) {
+				} else {
 					float pct = (float)i / (float)(numToSpawn - (fullcircle ? 0 : 1));
 					float rotateAngle = numToSpawn <= 1 ? 0 : Mathf.Lerp(minAngle, maxAngle, pct);
-					spawnPosition += spawnRadius * (Quaternion.Euler(0f, 0f, rotateAngle) * transform.right);
-				}
+					if (Slonersoft.SloneUtil.WarKit.WarKitSettings.is2D()) {
+						spawnOrient = transform.rotation * Quaternion.Euler(0f, 0f, rotateAngle);
+					} else {
+						spawnOrient = transform.rotation * Quaternion.Euler(transform.up * rotateAngle);
+					}
 
-				if (pointAwayFrom != null) {
-					spawnOrient = CoreUtils2D.RotationFromRightVec(spawnPosition - pointAwayFrom.position);
+					if (spawnRadius > 0f) {
+						spawnPosition += spawnRadius * (spawnOrient * Vector3.forward);
+					}
 				}
 
 				GameObject o = Instantiate (spawnObject, spawnPosition, spawnOrient);
-				SpawnOnDeathHandler handler = o.GetComponent<SpawnOnDeathHandler>();
-				if (handler != null) {
-					handler.OnSpawn(gameObject, killer);
-				}
+				gameObject.SendBlip(Blip.Type.CREATED, new BlipCreate(o));
 			}
 
 			// don't repeat it.
 			enabled = false;
 		}
-	}
-
-	/// <summary>
-	/// Override this to perform special behavior when spawned via death.
-	/// </summary>
-	public abstract class SpawnOnDeathHandler : MonoBehaviour {
-		public abstract void OnSpawn(GameObject parent, GameObject parentKiller);
 	}
 }

@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using Slonersoft.SloneUtil.Core;
+using Slonersoft.SloneUtil.BlipKit;
 
 namespace Slonersoft.SloneUtil.WarKit {
 	// The product of a weapon, such as a bullet or laser.
 	public class WeaponDamager : MonoBehaviour {
 
+		public bool friendlyFire = false;
 		private Warrior _owner;
 		public Warrior owner {
 			get {
@@ -22,9 +24,15 @@ namespace Slonersoft.SloneUtil.WarKit {
 			}
 		}
 
+		protected bool CanDamage(Damageable d) {
+			bool canDamage = friendlyFire || d.team != ownerTeam.team;
+			string canCannot = canDamage ? "can" : "cannot";
+			Debug.Log($"{name} {canCannot} damage {d.name}");
+			return canDamage;
+		}
+
 		protected TeamAssignment ownerTeam;
 		protected LayerMask layerMask;
-		protected SpawnDamagerOnDeathHandler spawnHandler;
 
 		public void RefreshLayerMask() {
 			if (WarKitSettings.is3D()) {
@@ -35,8 +43,17 @@ namespace Slonersoft.SloneUtil.WarKit {
 		}
 
 		virtual protected void Awake() {
-			spawnHandler = gameObject.AddComponent<SpawnDamagerOnDeathHandler>();
 			RefreshLayerMask();
+
+			// Any children we create belong to the same owner.
+			gameObject.ListenForBlips(Blip.Type.CREATED, blip => {
+				GameObject createdObj = (blip as BlipCreate).createdObject;
+				WeaponDamager createdDamager = createdObj.GetComponent<WeaponDamager>();
+				if (createdDamager) {
+					Debug.Log($"Owner: {this.owner.name}");
+					createdDamager.owner = this.owner;
+				}
+			});
 		}
 
 		public void SetTeam(Team t)
