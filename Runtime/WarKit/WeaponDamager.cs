@@ -47,7 +47,6 @@ namespace Slonersoft.SloneUtil.WarKit {
 				GameObject createdObj = (blip as BlipCreate).createdObject;
 				WeaponDamager createdDamager = createdObj.GetComponent<WeaponDamager>();
 				if (createdDamager) {
-					Debug.Log($"Owner: {this.owner.name}");
 					createdDamager.owner = this.owner;
 				}
 			});
