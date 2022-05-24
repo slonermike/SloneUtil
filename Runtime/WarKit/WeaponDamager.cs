@@ -25,10 +25,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 		}
 
 		protected bool CanDamage(Damageable d) {
-			bool canDamage = friendlyFire || d.team != ownerTeam.team;
-			string canCannot = canDamage ? "can" : "cannot";
-			Debug.Log($"{name} {canCannot} damage {d.name}");
-			return canDamage;
+			return friendlyFire || d.team != ownerTeam.team;
 		}
 
 		protected TeamAssignment ownerTeam;
