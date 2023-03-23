@@ -21,9 +21,9 @@ namespace Slonersoft.SloneUtil.WarKit {
         void FixedUpdate() {
             if (finder.targetDamageable) {
                 if (WarKitSettings.is2D()) {
-                    CoreUtils2D.TurnToPoint(transform, finder.targetDamageable.transform.position, turnSpeed);
+                    CoreUtils2D.TurnToPoint(transform, finder.targetDamageable.targetTransform.position, turnSpeed);
                 } else {
-                    Vector3 toTarget = finder.targetDamageable.transform.position - transform.position;
+                    Vector3 toTarget = finder.targetDamageable.targetTransform.position - transform.position;
                     if (flattenDirection) {
                         toTarget = Vector3.ProjectOnPlane(toTarget, transform.up);
                     }

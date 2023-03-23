@@ -88,6 +88,9 @@ namespace Slonersoft.SloneUtil.WarKit {
 
 		Team _team = Team.NONE;
 
+		[Tooltip("Where to send the bullets (defaults to self).")]
+		public Transform targetTransform;
+
 		protected virtual Team GetTeam()
 		{
 			return gameObject.GetTeam ();
@@ -134,6 +137,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 
 		protected virtual void Start()
 		{
+			targetTransform = targetTransform ? targetTransform : transform;
 			if (takeDamageFromChildColliders) {
 				List<GameObject> childObjects = new List<GameObject>();
 				if (WarKitSettings.is3D()) {
