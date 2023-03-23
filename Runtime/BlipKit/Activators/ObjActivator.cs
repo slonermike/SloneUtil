@@ -9,7 +9,7 @@ namespace Slonersoft.SloneUtil.BlipKit {
         public GameObject target;
 
         protected virtual void Awake() {
-            if (!target) target = gameObject;
+            target = target ? target : gameObject;
         }
     }
 }

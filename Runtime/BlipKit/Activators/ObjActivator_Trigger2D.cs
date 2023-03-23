@@ -2,24 +2,13 @@
 using System.Collections.Generic;
 using Slonersoft.SloneUtil.BlipKit;
 
-[RequireComponent(typeof(Collider))]
-[RequireComponent(typeof(Rigidbody))]
-public class ObjActivator_Trigger : ObjActivator
+[RequireComponent(typeof(Collider2D))]
+public class ObjActivator_Trigger2D : ObjActivator
 {
     public enum TriggerState {
         ENTER,
         STAY,
         EXIT
-    }
-
-    protected override void Awake() {
-        base.Awake();
-
-        #if DEBUG
-        if (!GetComponent<Rigidbody>().isKinematic) {
-            Debug.LogError("Rigid body on trigger must be kinematic.");
-        }
-        #endif
     }
 
     [System.Serializable]
@@ -33,7 +22,7 @@ public class ObjActivator_Trigger : ObjActivator
 
     public List<EventPair> pairs;
 
-    void OnTriggerEnter(Collider col) {
+    void OnTriggerEnter2D(Collider2D col) {
         Debug.Log("entered trigger");
         foreach (EventPair pair in pairs) {
             if (target && pair.triggerState == TriggerState.ENTER) {
@@ -42,7 +31,7 @@ public class ObjActivator_Trigger : ObjActivator
         }
     }
 
-    void OnTriggerExit(Collider col) {
+    void OnTriggerExit2D(Collider2D col) {
         foreach (EventPair pair in pairs) {
             if (target && pair.triggerState == TriggerState.EXIT) {
                 target.SendBlip(pair.blipToSend);
@@ -50,7 +39,7 @@ public class ObjActivator_Trigger : ObjActivator
         }
     }
 
-    void OnTriggerStay(Collider collider) {
+    void OnTriggerStay2D(Collider2D collider) {
         foreach (EventPair pair in pairs) {
             if (target && pair.triggerState == TriggerState.STAY) {
                 target.SendBlip(pair.blipToSend);
