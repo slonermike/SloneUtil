@@ -23,7 +23,10 @@ namespace Slonersoft.SloneUtil.WarKit {
                 if (WarKitSettings.is2D()) {
                     CoreUtils2D.TurnToPoint(transform, finder.targetDamageable.transform.position, turnSpeed);
                 } else {
-                    Vector3 toTarget = Vector3.ProjectOnPlane(finder.targetDamageable.transform.position - transform.position, transform.up);
+                    Vector3 toTarget = finder.targetDamageable.transform.position - transform.position;
+                    if (flattenDirection) {
+                        toTarget = Vector3.ProjectOnPlane(toTarget, transform.up);
+                    }
                     CoreUtils.TurnToPoint(transform, transform.position + toTarget, turnSpeed);
                 }
             }
