@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,14 +13,24 @@ namespace Slonersoft.SloneUtil.Materials {
         void Awake() {
             renderers = GetComponentsInChildren<Renderer>();
             foreach (Renderer r in renderers) {
-                var commonMaterial = r.sharedMaterial;
-                if (!mapToInstance.ContainsKey(commonMaterial)) {
-                    mapToInstance[commonMaterial] = Material.Instantiate(commonMaterial);
-                    materials.Add(mapToInstance[commonMaterial]);
-                }
-                r.sharedMaterial = mapToInstance[commonMaterial];
+                r.sharedMaterial = RegisterMaterial(r.sharedMaterial);
             }
         }
+
+        public Material RegisterMaterial(Material src, bool shareInstances = true) {
+            if (shareInstances) {
+                if (!mapToInstance.ContainsKey(src)) {
+                    mapToInstance[src] = Material.Instantiate(src);
+                    materials.Add(mapToInstance[src]);
+                }
+                return mapToInstance[src];
+            } else {
+                Material newMaterial = Material.Instantiate(src);
+                materials.Add(newMaterial);
+                return newMaterial;
+            }
+        }
+
         public void SetFloat(string floatName, float val) {
             foreach (Material m in materials) {
                 m.SetFloat(floatName, val);
@@ -33,16 +42,11 @@ namespace Slonersoft.SloneUtil.Materials {
                 m.SetColor(colorName, val);
             }
         }
-        // Start is called before the first frame update
-        void Start()
-        {
 
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
+        public void SetSortIndex(int index) {
+            foreach (Material m in materials) {
+                m.renderQueue = index;
+            }
         }
     }
 }
