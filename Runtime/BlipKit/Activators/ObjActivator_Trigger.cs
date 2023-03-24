@@ -34,7 +34,6 @@ public class ObjActivator_Trigger : ObjActivator
     public List<EventPair> pairs;
 
     void OnTriggerEnter(Collider col) {
-        Debug.Log("entered trigger");
         foreach (EventPair pair in pairs) {
             if (target && pair.triggerState == TriggerState.ENTER) {
                 target.SendBlip(pair.blipToSend);

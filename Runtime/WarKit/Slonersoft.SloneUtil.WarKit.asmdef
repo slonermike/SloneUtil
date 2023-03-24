@@ -1,8 +1,10 @@
 {
     "name": "Slonersoft.SloneUtil.WarKit",
+    "rootNamespace": "",
     "references": [
         "GUID:f353eabf4fe1647d8ae5b02866131008",
-        "GUID:c510c3f30ccc547fea9684502c46074c"
+        "GUID:c510c3f30ccc547fea9684502c46074c",
+        "GUID:98d6cf8adb3c8452aa3c38b6b0ec3e54"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

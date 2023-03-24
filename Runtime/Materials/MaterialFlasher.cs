@@ -38,7 +38,7 @@ namespace Slonersoft.SloneUtil.Materials {
             float r = 0f, g = 0f, b = 0f;
             for(int i = activeFlashes.Count - 1; i >= 0; i--) {
                 ActiveFlash a = activeFlashes[i];
-                float pct = a.lifetimeLeft / a.totalLifetime;
+                float pct = a.color.a * (a.lifetimeLeft / a.totalLifetime);
                 r += a.color.r * pct;
                 g += a.color.g * pct;
                 b += a.color.b * pct;
