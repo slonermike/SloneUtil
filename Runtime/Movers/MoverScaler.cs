@@ -18,47 +18,41 @@ namespace Slonersoft.SloneUtil.Movers {
 
 		[Tooltip("True if you want to scale to a multiple of the starting scale.  False if worldspace scale.")]
 		public bool scaleAsMultiplier = true;
+		public Coroutine changeCoroutine;
 
-		float scaleSpeed;
-		Vector3 startScale;
+		IEnumerator Scale_coroutine () {
+			CancelScale();
+
+			yield return new WaitForSeconds(startDelay);
+			float timeRemaining = scaleTime;
+			Vector3 startScale = moverTransform.localScale;
+			Vector3 endScale = scaleGoal;
+
+			if (scaleAsMultiplier) {
+				endScale.Scale (scaleGoal);
+			}
+
+			do {
+				timeRemaining = CoreUtils.AdvanceValue(timeRemaining, 0f, 1f);
+				float progressPct = 1f - (timeRemaining / scaleTime);
+				transform.localScale = Vector3.Lerp(startScale, endScale, progressPct);
+				yield return new WaitForEndOfFrame();
+			} while (timeRemaining > 0f);
+		}
 
 		void OnEnable()
 		{
-			scaleSpeed = 0f;
-			if (startDelay > 0f) {
-				Invoke("UpdateSpeed", startDelay);
-			} else {
-				UpdateSpeed();
-			}
+			changeCoroutine = StartCoroutine(Scale_coroutine());
 		}
 
-		public void UpdateSpeed()
-		{
-			startScale = moverTransform.localScale;
-
-			if (scaleAsMultiplier) {
-				Vector3 finalScale = startScale;
-				finalScale.Scale (scaleGoal);
-				scaleGoal = finalScale;
-			}
-
-			if (scaleTime <= 0f) {
-				moverTransform.localScale = scaleGoal;
-				scaleSpeed = 0f;
-			} else {
-				scaleSpeed = (scaleGoal - startScale).magnitude / scaleTime;
-			}
+		void OnDisable() {
+			CancelScale();
 		}
 
-		void Update()
-		{
-			if (scaleSpeed > 0f) {
-				moverTransform.localScale = CoreUtils.AdvanceValue (moverTransform.localScale, scaleGoal, scaleSpeed);
-
-				// Once we reach it, stop advancing.
-				if (moverTransform.localScale == scaleGoal) {
-					scaleSpeed = 0f;
-				}
+		void CancelScale() {
+			if (changeCoroutine != null) {
+				StopCoroutine(changeCoroutine);
+				changeCoroutine = null;
 			}
 		}
 	}

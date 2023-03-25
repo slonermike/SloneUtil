@@ -27,30 +27,26 @@ public class ObjActivator_Interval : ObjActivator
         public Blip.Type messageType = Blip.Type.ACTIVATE;
     }
 
+    [Tooltip("True to start automatically, false to wait to RECEIVE an activation message.")]
+    public bool autoStart = true;
+
     public bool looping = false;
     public List<Interval> intervalList;
 
     private Coroutine intervalCoroutine;
 
-    protected override void Awake() {
-        base.Awake();
-
-        gameObject.ListenForBlips(Blip.Type.ACTIVATE, delegate() {
-            if (intervalCoroutine == null) {
-                intervalCoroutine = StartCoroutine(RunIntervals());
-            }
-        });
-    }
-
     // Start is called before the first frame update
     void Start()
     {
-#if DEBUG
-        foreach (Interval i in intervalList) {
-            GameObject t = i.overrideTarget ? i.overrideTarget : target;
-            Debug.Assert(t != gameObject, "Interval activator (" + name + ") shouldn't target itself since it needs to be externally activated to start.");
+        if (autoStart) {
+            intervalCoroutine = StartCoroutine(RunIntervals());
+        } else {
+            gameObject.ListenForBlips(Blip.Type.ACTIVATE, delegate() {
+                if (intervalCoroutine == null) {
+                    intervalCoroutine = StartCoroutine(RunIntervals());
+                }
+            });
         }
-#endif
     }
 
     IEnumerator RunIntervals() {
@@ -59,6 +55,7 @@ public class ObjActivator_Interval : ObjActivator
                 GameObject t = (interval.overrideTarget ? interval.overrideTarget : target);
                 for (int i = 0; i < interval.numActivations; i++) {
                     t.SendBlip(interval.messageType);
+                    Debug.Log("BLIP!");
                     if (i != interval.numActivations - 1) {
                         yield return new WaitForSeconds(interval.timeBetween);
                     }

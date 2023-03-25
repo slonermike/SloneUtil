@@ -56,13 +56,14 @@ namespace Slonersoft.SloneUtil.WarKit {
             bool allowCheck = !onscreenTargetsOnly || sourceOffscreenPct < 0f || CoreUtils.IsPointOnAnyScreen(transform.position, sourceOffscreenPct);
             if (allowCheck && nextSearchTime <= Time.time) {
                 Damageable exemptTarget = loseTargetViaRaycast ? null : damageableTarget;
+                Damageable.NeutralHandling neutralHandling = team == Team.PLAYER ? Damageable.NeutralHandling.PREFER_TEAM : Damageable.NeutralHandling.IGNORE;
                 damageableTarget = Damageable.GetTarget(
                     transform,
                     team,
                     searchAngle,
                     searchDistance,
                     onscreenTargetsOnly,
-                    Damageable.NeutralHandling.PREFER_TEAM,
+                    neutralHandling,
                     raycastCheck,
                     exemptTarget
                 );
