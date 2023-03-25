@@ -56,7 +56,16 @@ namespace Slonersoft.SloneUtil.WarKit {
             bool allowCheck = !onscreenTargetsOnly || sourceOffscreenPct < 0f || CoreUtils.IsPointOnAnyScreen(transform.position, sourceOffscreenPct);
             if (allowCheck && nextSearchTime <= Time.time) {
                 Damageable exemptTarget = loseTargetViaRaycast ? null : damageableTarget;
-                damageableTarget = Damageable.GetTarget(transform, team, searchAngle, searchDistance, onscreenTargetsOnly, true, raycastCheck, exemptTarget);
+                damageableTarget = Damageable.GetTarget(
+                    transform,
+                    team,
+                    searchAngle,
+                    searchDistance,
+                    onscreenTargetsOnly,
+                    Damageable.NeutralHandling.PREFER_TEAM,
+                    raycastCheck,
+                    exemptTarget
+                );
 
                 // Randomize the next time so like enemies don't end up raycasting all at once.
                 nextSearchTime = Time.time + (timeBetweenSearches * Random.Range(0.9f, 1f));

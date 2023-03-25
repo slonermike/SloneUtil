@@ -69,6 +69,17 @@ namespace Slonersoft.SloneUtil.WarKit {
 
 	public abstract class Damageable : MonoBehaviour {
 
+		public enum NeutralHandling {
+			/** Will only provide targets from theh opposing team. */
+			IGNORE,
+
+			/** Will consider neutral targets the same priority as opposing-team targets. */
+			ALLOW,
+
+			/** Will prioritize opposing-team targets over neutral targets. */
+			PREFER_TEAM
+		}
+
 		public delegate void OnDeathCallback(Damageable deadGuy, BlipDamage data);
 		public delegate void OnDamagedCallback(BlipDamage data);
 
@@ -290,7 +301,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 		/// <param name="angleThreshold">The full angle inside which targets are valid</param>
 		/// <param name="maxDistance">The maxiumum radius in which targets are valid</param>
 		/// <param name="onscreenOnly">True if only onscreen targets count.</param>
-		/// <param name="ignoreNeutral">True to ignore TEAM_NONE</param>
+		/// <param name="neutralHandling">Specify how to handle targets in TEAM_NONE</param>
 		/// <param name="raycastCheck">True to use raycast to validate targets</param>
 		/// <param name="raycastExemptTarget">Target that can ignore raycast check.</param>
 		/// <returns></returns>
@@ -300,7 +311,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 			float angleThreshold = 360f,
 			float maxDistance = -1f,
 			bool onscreenOnly = true,
-			bool ignoreNeutral = false,
+			NeutralHandling neutralHandling = NeutralHandling.PREFER_TEAM,
 			bool raycastCheck = false,
 			Damageable raycastExemptTarget = null
 		)
@@ -321,8 +332,12 @@ namespace Slonersoft.SloneUtil.WarKit {
 					continue;
 				}
 
-				if (ignoreNeutral && d.team == Team.NONE) {
-					continue;
+				if (d.team == Team.NONE) {
+					if (neutralHandling == NeutralHandling.IGNORE) {
+						continue;
+					} else if (neutralHandling == NeutralHandling.PREFER_TEAM && nearest != null) {
+						continue;
+					}
 				}
 
 				// Ignore things far offscreen (if applicable).
