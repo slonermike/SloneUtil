@@ -20,7 +20,7 @@ namespace Slonersoft.SloneUtil.Materials {
 			}
 
 			if (renderers.Count == 0) {
-				Debug.Log($"Attempting to instance a sprite material with no renderers. Owner: {name}");
+				Debug.LogWarning($"Attempting to instance a sprite material with no renderers. Owner: {name}");
 				return;
 			}
 

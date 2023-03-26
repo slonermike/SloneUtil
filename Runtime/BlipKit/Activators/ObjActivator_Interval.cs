@@ -55,7 +55,6 @@ public class ObjActivator_Interval : ObjActivator
                 GameObject t = (interval.overrideTarget ? interval.overrideTarget : target);
                 for (int i = 0; i < interval.numActivations; i++) {
                     t.SendBlip(interval.messageType);
-                    Debug.Log("BLIP!");
                     if (i != interval.numActivations - 1) {
                         yield return new WaitForSeconds(interval.timeBetween);
                     }

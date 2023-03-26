@@ -23,7 +23,6 @@ public class ObjActivator_Trigger2D : ObjActivator
     public List<EventPair> pairs;
 
     void OnTriggerEnter2D(Collider2D col) {
-        Debug.Log("entered trigger");
         foreach (EventPair pair in pairs) {
             if (target && pair.triggerState == TriggerState.ENTER) {
                 target.SendBlip(pair.blipToSend);

@@ -215,7 +215,6 @@ namespace Slonersoft.SloneUtil.WarKit {
 		}
 
 		void OnCollisionEnter(Collision coll) {
-			Debug.Log($"{name} Entered collision with {coll.gameObject.name}");
 			if (damageOnTouchOthers) {
 				OnCollision(coll.gameObject, coll.contacts[0].point, coll.contacts[0].normal);
 			}

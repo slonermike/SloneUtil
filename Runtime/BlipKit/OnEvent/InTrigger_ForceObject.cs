@@ -11,12 +11,6 @@ namespace Slonersoft.SloneUtil.BlipKit {
         public Transform centerDelegate;
         public bool flattenPushVec = true;
 
-        private void OnTriggerEnter(Collider other) {
-            Debug.Log("entered");
-        }
-        private void OnTriggerExit(Collider other) {
-            Debug.Log("Exited");
-        }
         private void OnTriggerStay(Collider other) {
             Transform center = centerDelegate ? centerDelegate : transform;
             Vector3 toObject = (other.transform.position - center.position);
