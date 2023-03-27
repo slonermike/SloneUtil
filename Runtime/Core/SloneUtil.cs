@@ -258,24 +258,30 @@ namespace Slonersoft.SloneUtil.Core
 		// returns true when it is facing the object.
 		public static bool TurnToPoint(this Transform t, Vector3 focalPoint, float degreesPerSec = -1f)
 		{
-			// Position of turning object.
-			Vector3 pos = t.position;
+			Vector3 delta = GetTurnToPointDelta(t.position, t.eulerAngles, t.up, focalPoint, degreesPerSec);
 
+			t.eulerAngles += delta;
+
+			return delta.sqrMagnitude == 0f;
+		}
+
+		public static Vector3 GetTurnToPointDelta(Vector3 fromPoint, Vector3 fromEulerAngles, Vector3 upVec, Vector3 toPoint, float degreesPerSec) {
 			// Vector from turning object to its target.
-			Vector3 toFocalPoint = focalPoint - pos;
+			Vector3 toFocalPoint = toPoint - fromPoint;
 
 			// Current angle of turning object.
-			Vector3 startAngles = t.eulerAngles;
+			Vector3 startAngles = fromEulerAngles;
 
-			Quaternion targetRotation = Quaternion.LookRotation (toFocalPoint, t.up);
+			Quaternion targetRotation = Quaternion.LookRotation (toFocalPoint, upVec);
 			Vector3 targetAngles = targetRotation.eulerAngles;
 
+			Vector3 newEulerAngles = fromEulerAngles;
 			if (degreesPerSec >= 0f)
-				t.eulerAngles = AdvanceEulerAngles (t.eulerAngles, targetAngles, degreesPerSec);
+				newEulerAngles = AdvanceEulerAngles (fromEulerAngles, targetAngles, degreesPerSec);
 			else
-				t.eulerAngles = targetAngles;
+				newEulerAngles = targetAngles;
 
-			return t.eulerAngles == targetAngles;
+			return newEulerAngles - fromEulerAngles;
 		}
 
 		// Advances a set of euler angles at a specified speed, stopping once it reaches the specified angles.
