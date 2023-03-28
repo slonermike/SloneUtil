@@ -367,7 +367,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 				// No raycast checks for existing targets.
 				if (raycastCheck && d != raycastExemptTarget) {
 					if (WarKitSettings.is2D()) {
-						int weaponLayerMask = Physics2D.GetLayerCollisionMask(TeamUtil.GetTeamWeaponLayer(attackerTeam));
+						int weaponLayerMask = Physics2D.GetLayerCollisionMask(Weapon.weaponLayer);
 						Vector3 toTarget = d.transform.position - t.position;
 						float toTargetLength = toTarget.magnitude;
 

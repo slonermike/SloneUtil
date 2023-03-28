@@ -31,17 +31,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 		protected TeamAssignment ownerTeam;
 		protected LayerMask layerMask;
 
-		public void RefreshLayerMask() {
-			if (WarKitSettings.is3D()) {
-				layerMask = CoreUtils.GetLayerCollisionMask (gameObject.layer);
-			} else {
-				layerMask = Physics2D.GetLayerCollisionMask (gameObject.layer);
-			}
-		}
-
 		virtual protected void Awake() {
-			RefreshLayerMask();
-
 			// Any children we create belong to the same owner.
 			gameObject.ListenForBlips(Blip.Type.CREATED, blip => {
 				GameObject createdObj = (blip as BlipCreate).createdObject;
@@ -59,17 +49,6 @@ namespace Slonersoft.SloneUtil.WarKit {
 			}
 
 			ownerTeam.team = t;
-
-			if (ownerTeam != null) {
-				int newLayer = ownerTeam.GetWeaponLayer ();
-				if (newLayer >= 0) {
-					gameObject.layer = newLayer;
-				}
-			} else {
-				Debug.LogError ("WeaponDamager created by owner (" + _owner.name + ") with no team.");
-			}
-
-			RefreshLayerMask();
 		}
 
 		// Use this for initialization
@@ -79,6 +58,12 @@ namespace Slonersoft.SloneUtil.WarKit {
 				if (assignment != null) {
 					SetTeam (assignment.team);
 				}
+			}
+
+			if (WarKitSettings.is3D()) {
+				layerMask = CoreUtils.GetLayerCollisionMask (Weapon.weaponLayer);
+			} else {
+				layerMask = Physics2D.GetLayerCollisionMask (Weapon.weaponLayer);
 			}
 		}
 
