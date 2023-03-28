@@ -6,7 +6,7 @@ namespace Slonersoft.SloneUtil.WarKit {
     public class WarKitSettings : MonoBehaviour
     {
         private static WarKitSettings _inst;
-        private static WarKitSettings inst {
+        public static WarKitSettings inst {
             get {
                 if (!_inst) {
                     _inst = GameObject.FindObjectOfType<WarKitSettings>();
@@ -20,10 +20,25 @@ namespace Slonersoft.SloneUtil.WarKit {
             }
         }
 
+        int _weaponLayer = -1;
+		public int weaponLayer {
+			get {
+				if (_weaponLayer < 0) {
+					_weaponLayer = LayerMask.NameToLayer (weaponLayerName);
+                    if (_weaponLayer < 0) {
+                        Debug.LogError($"WarKitSettings cannot find weapon layer: {weaponLayerName}");
+                        _weaponLayer = 0;
+                    }
+				}
+				return _weaponLayer;
+			}
+		}
+
         public enum Dimensions {
             DIM_2D, DIM_3D
         }
 
+        public string weaponLayerName = "WEAPON";
         public Dimensions dimensions = Dimensions.DIM_2D;
 
         public static bool is3D() {

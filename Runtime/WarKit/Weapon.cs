@@ -8,16 +8,6 @@ namespace Slonersoft.SloneUtil.WarKit {
 		public GameObject crosshair;
 		protected TeamAssignment ownerTeam;
 
-		static int _weaponLayer = -1;
-		public static int weaponLayer {
-			get {
-				if (_weaponLayer < 0) {
-					_weaponLayer = LayerMask.NameToLayer ("WEAPON");
-				}
-				return _weaponLayer;
-			}
-		}
-
 		private Warrior _owner;
 		public Warrior owner {
 			get {

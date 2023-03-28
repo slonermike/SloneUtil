@@ -61,9 +61,9 @@ namespace Slonersoft.SloneUtil.WarKit {
 			}
 
 			if (WarKitSettings.is3D()) {
-				layerMask = CoreUtils.GetLayerCollisionMask (Weapon.weaponLayer);
+				layerMask = CoreUtils.GetLayerCollisionMask (WarKitSettings.inst.weaponLayer);
 			} else {
-				layerMask = Physics2D.GetLayerCollisionMask (Weapon.weaponLayer);
+				layerMask = Physics2D.GetLayerCollisionMask (WarKitSettings.inst.weaponLayer);
 			}
 		}
 
