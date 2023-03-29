@@ -21,9 +21,9 @@ namespace Slonersoft.SloneUtil.WarKit {
         public Transform muzzleTransform;
 
         [Tooltip("Weapon to give the character if he has none.")]
-        public List<WeaponAssignment> defaultWeapons;
+        public List<WeaponAssignment> defaultWeapons = new List<WeaponAssignment>();
 
-        protected List<Weapon> weapons;
+        protected List<Weapon> weapons = new List<Weapon>();
 
 		[HideInInspector] public Health health;
 

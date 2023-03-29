@@ -141,6 +141,14 @@ namespace Slonersoft.SloneUtil.WarKit {
 
 		public abstract bool DoDamage(BlipDamage data);
 
+		IEnumerator DoDamageAfterFrame_coroutine(BlipDamage data) {
+			yield return new WaitForEndOfFrame();
+			DoDamage(data);
+		}
+		public void DoDamageAfterFrame(BlipDamage data) {
+			StartCoroutine(DoDamageAfterFrame_coroutine(data));
+		}
+
 		protected virtual void Awake()
 		{
 			invulnerable = startInvulnerable;
@@ -185,7 +193,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 		}
 
 		// Respond to collision with another damageable.
-		public void OnCollision(GameObject o, Vector3 point, Vector3 normal) {
+		public void OnCollision(GameObject o, Vector3 point, Vector3 normal, bool processMutualDamage = false) {
 			Damageable d = o.GetComponent<Damageable> ();
 			Warrior attacker = null;
 			if (d != null) {
@@ -205,19 +213,21 @@ namespace Slonersoft.SloneUtil.WarKit {
 				return;
 			}
 
-			DoDamage(new BlipDamage(GetHealth(), attacker, point, normal));
+			if (d && processMutualDamage) {
+				d.OnCollision(gameObject, point, -normal, false);
+			}
+
+			if (damageOnTouchOthers) {
+				DoDamageAfterFrame(new BlipDamage(GetHealth(), attacker, point, normal));
+			}
 		}
 
 		void OnCollisionEnter2D(Collision2D coll) {
-			if (damageOnTouchOthers) {
-				OnCollision(coll.gameObject, coll.contacts[0].point, coll.contacts[0].normal);
-			}
+			OnCollision(coll.gameObject, coll.contacts[0].point, coll.contacts[0].normal);
 		}
 
 		void OnCollisionEnter(Collision coll) {
-			if (damageOnTouchOthers) {
-				OnCollision(coll.gameObject, coll.contacts[0].point, coll.contacts[0].normal);
-			}
+			OnCollision(coll.gameObject, coll.contacts[0].point, coll.contacts[0].normal);
 		}
 
 		public abstract float GetHealth();
@@ -283,10 +293,6 @@ namespace Slonersoft.SloneUtil.WarKit {
 			if (invulnerableTime >= 0f) {
 				Invoke ("MakeVulnerable", invulnerableTime);
 			}
-		}
-
-		public virtual bool StopUnstoppable() {
-			return false;
 		}
 
 		// TODO: Split lists up by teams.
@@ -381,6 +387,8 @@ namespace Slonersoft.SloneUtil.WarKit {
 						if (hitDamageable == null || d != hitDamageable) {
 							continue;
 						}
+					} else {
+						Debug.LogWarning("3D Raycast check not implemented for Damageable.GetTarget");
 					}
 				}
 
