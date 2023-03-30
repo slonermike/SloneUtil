@@ -265,9 +265,13 @@ namespace Slonersoft.SloneUtil.Core
 			return delta.sqrMagnitude == 0f;
 		}
 
-		public static Vector3 GetTurnToPointDelta(Vector3 fromPoint, Vector3 fromEulerAngles, Vector3 upVec, Vector3 toPoint, float degreesPerSec) {
+		public static Vector3 GetTurnToPointDelta(Vector3 fromPoint, Vector3 fromEulerAngles, Vector3 upVec, Vector3 toPoint, float degreesPerSec, bool flatten = false) {
 			// Vector from turning object to its target.
 			Vector3 toFocalPoint = toPoint - fromPoint;
+
+			if (flatten) {
+				toFocalPoint = Vector3.ProjectOnPlane(toFocalPoint, upVec);
+			}
 
 			// Current angle of turning object.
 			Vector3 startAngles = fromEulerAngles;
