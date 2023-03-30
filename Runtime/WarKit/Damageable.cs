@@ -83,7 +83,11 @@ namespace Slonersoft.SloneUtil.WarKit {
 		public delegate void OnDeathCallback(Damageable deadGuy, BlipDamage data);
 		public delegate void OnDamagedCallback(BlipDamage data);
 
-		private static LinkedList<Damageable> damageables = new LinkedList<Damageable>();
+		private static Dictionary<Team,LinkedList<Damageable>> damageables = new Dictionary<Team,LinkedList<Damageable>>() {
+			{Team.NONE, new LinkedList<Damageable>()},
+			{Team.PLAYER, new LinkedList<Damageable>()},
+			{Team.NPC, new LinkedList<Damageable>()},
+		};
 
 		[Tooltip("True to destroy this object when it dies.")]
 		public bool destroyOnDeath = true;
@@ -184,12 +188,12 @@ namespace Slonersoft.SloneUtil.WarKit {
 
 		protected virtual void OnEnable()
 		{
-			damageables.AddLast (this);
+			damageables[this.team].AddLast (this);
 		}
 
 		protected virtual void OnDisable()
 		{
-			damageables.Remove (this);
+			damageables[this.team].Remove (this);
 		}
 
 		// Respond to collision with another damageable.
@@ -327,74 +331,80 @@ namespace Slonersoft.SloneUtil.WarKit {
 			float maxDistanceSq = maxDistance * maxDistance;
 			Vector3 pos = t.position;
 
-			// TODO: does this need to work in 3d?
-			foreach (Damageable d in damageables) {
-				Vector3 dPos = d.transform.position;
-				Vector3 toDamageable = dPos - pos;
+			foreach (KeyValuePair<Team, LinkedList<Damageable>> kvp in damageables) {
+
+				// Maybe ignore neutral objects.
+				if (kvp.Key == Team.NONE && neutralHandling == NeutralHandling.IGNORE) {
+					continue;
 
 				// No friendly fire.
-				if (d.team == attackerTeam) {
+				} else if (kvp.Key == attackerTeam) {
 					continue;
 				}
 
-				if (d.team == Team.NONE) {
-					if (neutralHandling == NeutralHandling.IGNORE) {
-						continue;
-					} else if (neutralHandling == NeutralHandling.PREFER_TEAM && nearest != null) {
-						continue;
-					}
-				}
+				foreach (Damageable d in kvp.Value) {
+					Vector3 dPos = d.transform.position;
+					Vector3 toDamageable = dPos - pos;
 
-				// Ignore things far offscreen (if applicable).
-				if (onscreenOnly && !CoreUtils.IsPointOnAnyScreen (dPos, 0.5f)) {
-					continue;
-				}
-
-				Vector3 myFvec = WarKitSettings.is2D() ? t.right : t.forward;
-
-				// Check angle threshold if appropriate.
-				if (minDot >= 0f) {
-					float dot = Vector3.Dot (toDamageable.normalized, myFvec);
-					if (dot < minDot) {
+					if (d.team == Team.NONE &&
+							neutralHandling == NeutralHandling.PREFER_TEAM &&
+							nearest != null &&
+							nearest.team != Team.NONE
+					) {
 						continue;
 					}
-				}
 
-				float distSq = toDamageable.sqrMagnitude;
-				if (maxDistance > 0f && distSq > maxDistanceSq) {
-					continue;
-				}
+					// Ignore things far offscreen (if applicable).
+					if (onscreenOnly && !CoreUtils.IsPointOnAnyScreen (dPos, 0.5f)) {
+						continue;
+					}
 
-				// Not better than the existing best target?
-				if (nearest != null && distSq >= nearestDistSq) {
-					continue;
-				};
+					Vector3 myFvec = WarKitSettings.is2D() ? t.right : t.forward;
 
-				// No raycast checks for existing targets.
-				if (raycastCheck && d != raycastExemptTarget) {
-					if (WarKitSettings.is2D()) {
-						int weaponLayerMask = Physics2D.GetLayerCollisionMask(WarKitSettings.inst.weaponLayer);
-						Vector3 toTarget = d.transform.position - t.position;
-						float toTargetLength = toTarget.magnitude;
-
-						// TODO: Make this also work in 3d.
-						RaycastHit2D hit = Physics2D.Raycast(t.position, toTarget / toTargetLength, toTargetLength, weaponLayerMask);
-						if (!hit) {
+					// Check angle threshold if appropriate.
+					if (minDot >= 0f) {
+						float dot = Vector3.Dot (toDamageable.normalized, myFvec);
+						if (dot < minDot) {
 							continue;
 						}
-
-						Damageable hitDamageable = hit.collider.gameObject.GetComponent<Damageable>();
-						if (hitDamageable == null || d != hitDamageable) {
-							continue;
-						}
-					} else {
-						Debug.LogWarning("3D Raycast check not implemented for Damageable.GetTarget");
 					}
-				}
 
-				// Found a new best valid target.
-				nearest = d;
-				nearestDistSq = distSq;
+					float distSq = toDamageable.sqrMagnitude;
+					if (maxDistance > 0f && distSq > maxDistanceSq) {
+						continue;
+					}
+
+					// Not better than the existing best target?
+					if (nearest != null && distSq >= nearestDistSq) {
+						continue;
+					};
+
+					// No raycast checks for existing targets.
+					if (raycastCheck && d != raycastExemptTarget) {
+						if (WarKitSettings.is2D()) {
+							int weaponLayerMask = Physics2D.GetLayerCollisionMask(WarKitSettings.inst.weaponLayer);
+							Vector3 toTarget = d.transform.position - t.position;
+							float toTargetLength = toTarget.magnitude;
+
+							// TODO: Make this also work in 3d.
+							RaycastHit2D hit = Physics2D.Raycast(t.position, toTarget / toTargetLength, toTargetLength, weaponLayerMask);
+							if (!hit) {
+								continue;
+							}
+
+							Damageable hitDamageable = hit.collider.gameObject.GetComponent<Damageable>();
+							if (hitDamageable == null || d != hitDamageable) {
+								continue;
+							}
+						} else {
+							Debug.LogWarning("3D Raycast check not implemented for Damageable.GetTarget");
+						}
+					}
+
+					// Found a new best valid target.
+					nearest = d;
+					nearestDistSq = distSq;
+				}
 			}
 
 			return nearest;
