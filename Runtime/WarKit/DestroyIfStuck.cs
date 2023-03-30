@@ -30,6 +30,8 @@ public class DestroyIfStuck : MonoBehaviour
         if (stuckTime > afterTime) {
             gameObject.SendBlip(Blip.Type.DIED);
 		    GameObject.Destroy (gameObject);
+        } else {
+            prevPosition = transform.position;
         }
     }
 }

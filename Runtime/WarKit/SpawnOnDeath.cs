@@ -69,7 +69,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 			for (int i = 0; i < numToSpawn; i++) {
 				Vector3 spawnPosition = transform.position;
 
-				if (spawnPositions.Length > 0) {
+				if (spawnPositions != null && spawnPositions.Length > 0) {
 					spawnPosition = spawnPositions[i%spawnPositions.Length].position;
 					spawnOrient = spawnPositions[i%spawnPositions.Length].rotation;
 				} else {
