@@ -5,33 +5,36 @@ using UnityEngine;
 using Slonersoft.SloneUtil.Core;
 
 namespace Slonersoft.SloneUtil.AssetManagement {
-    public class ObjectPool<TBehaviour> where TBehaviour : Behaviour
+    public class ObjectPool
     {
-        private List<TBehaviour> rawPool;
-        private LinkedList<TBehaviour> free;
-        private LinkedList<TBehaviour> allocated;
+        public delegate void ObjectCreatedHandler(GameObject o);
+
+        private List<GameObject> rawPool;
+        private LinkedList<GameObject> free;
+        private LinkedList<GameObject> allocated;
         private GameObject poolParent;
         private GameObject originalPrefab;
         private int pageSize;
+        private ObjectCreatedHandler onObjectCreated;
 
-        public ObjectPool(GameObject prefab, int numToAllocate) {
+        public ObjectPool(GameObject prefab, int numToAllocate, ObjectCreatedHandler createdHandler = null) {
+            onObjectCreated = createdHandler;
             pageSize = numToAllocate;
             originalPrefab = prefab;
             poolParent = new GameObject($"Object Pool: {prefab.name}");
-            rawPool = new List<TBehaviour>();
-            free = new LinkedList<TBehaviour>();
-            allocated = new LinkedList<TBehaviour>();
+            rawPool = new List<GameObject>();
+            free = new LinkedList<GameObject>();
+            allocated = new LinkedList<GameObject>();
         }
 
         public void AddObjectsToPool(int numObjects) {
-            Debug.Log($"Allocating Children: {numObjects}");
             for (int i = 0; i < numObjects; i++) {
-                var newChild = CoreUtils.InstantiateChild(poolParent, originalPrefab).GetComponent<TBehaviour>();
-                Debug.Log($"Created Child: {newChild.name}");
+                var newChild = CoreUtils.InstantiateChild(poolParent, originalPrefab);
                 Debug.Assert(newChild != null, $"Prefab ${originalPrefab.name} for ObjectPool does not have the appropriate behaviour on it.");
                 rawPool.Add(newChild);
                 newChild.gameObject.SetActive(false);
                 free.AddFirst(newChild);
+                if (onObjectCreated != null) onObjectCreated(newChild);
             }
         }
 
@@ -39,18 +42,18 @@ namespace Slonersoft.SloneUtil.AssetManagement {
         /// Gets an item from the pool if one is available.
         /// </summary>
         /// <returns>MonoBehaviour or null</returns>
-        public TBehaviour Allocate(bool setActive = true) {
+        public GameObject Allocate(bool setActive = true) {
             if (free.Count == 0) {
                 AddObjectsToPool(pageSize);
                 Debug.Assert(free.Count >= 1);
             }
 
-            LinkedListNode<TBehaviour> node = free.First;
+            LinkedListNode<GameObject> node = free.First;
             free.RemoveFirst();
             allocated.AddFirst(node);
             node.Value.gameObject.SetActive(setActive);
             node.Value.transform.SetParent(null);
-            return node.Value as TBehaviour;
+            return node.Value as GameObject;
         }
 
         /// <summary>
@@ -59,9 +62,9 @@ namespace Slonersoft.SloneUtil.AssetManagement {
         /// TODO: Find a way to get back to O(1)
         /// </summary>
         /// <param name="b">Object to be returned to the pool.</param>
-        public void Free(TBehaviour b) {
+        public void Free(GameObject b) {
             b.gameObject.SetActive(false);
-            LinkedListNode<TBehaviour> node = allocated.Find(b);
+            LinkedListNode<GameObject> node = allocated.Find(b);
             if (node == null) {
                 Debug.LogError($"Tried to look up {b.name} in object pool {poolParent.name} but it wasn't there.");
                 return;
@@ -73,7 +76,7 @@ namespace Slonersoft.SloneUtil.AssetManagement {
             free.AddFirst(node);
         }
 
-        // IMPORTANT: needs to be called by the owner before deleting the object.
+        // IMPORTANT: needs to be called by the pool owner before destroying the pool.
         public void Destroy() {
             GameObject.Destroy(poolParent);
         }
