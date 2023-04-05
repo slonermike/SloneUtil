@@ -55,7 +55,7 @@ namespace Slonersoft.SloneUtil.WarKit {
         {
             // Get rid of the old weapon.
             if (weapons[(int)slot] != null) {
-                GameObject.Destroy (weapons[(int)slot]);
+                GameObject.Destroy (weapons[(int)slot].gameObject);
             }
 
             if (muzzleTransform == null) {
