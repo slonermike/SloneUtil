@@ -29,7 +29,7 @@ namespace Slonersoft.SloneUtil.Core {
 		public static bool IsAheadOf(this Transform xform, Transform target, float maxAngle = 90f) {
 			float radians = maxAngle * Mathf.Deg2Rad;
 			float cosAngle = Mathf.Cos (radians);
-			float dot = Vector3.Dot ((xform.position - target.position).normalized, target.forward.normalized);
+			float dot = Vector3.Dot ((xform.position - target.position).normalized, target.forward);
 			return dot >= cosAngle;
 		}
 
@@ -41,6 +41,13 @@ namespace Slonersoft.SloneUtil.Core {
 		/// <returns>True if it's within the threshold, false otherwise.</returns>
 		public static bool IsAheadOf(this GameObject obj, GameObject target)  {
 			return obj.transform.IsAheadOf (target.transform);
+		}
+
+		public static bool IsFacing(this Transform xform, Vector3 target, float maxAngle = 90f) {
+			float radians = maxAngle * Mathf.Deg2Rad;
+			float cosAngle = Mathf.Cos(radians);
+			float dot = Vector3.Dot((target - xform.position).normalized, xform.forward);
+			return dot >= cosAngle;
 		}
 
     public static void DoAfterTime(this GameObject gameObject, float timeSec, DoAfterTime.DelayedAction action) {
