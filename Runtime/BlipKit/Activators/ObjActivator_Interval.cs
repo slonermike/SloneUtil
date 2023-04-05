@@ -29,7 +29,7 @@ public class ObjActivator_Interval : ObjActivator
 
     [Tooltip("True to start automatically, false to wait to RECEIVE an activation message.")]
     public bool autoStart = true;
-
+    public float startDelay = 0f;
     public bool looping = false;
     public List<Interval> intervalList;
 
@@ -50,6 +50,10 @@ public class ObjActivator_Interval : ObjActivator
     }
 
     IEnumerator RunIntervals() {
+        if (startDelay > 0) {
+            yield return new WaitForSeconds(startDelay);
+        }
+
         do {
             foreach (Interval interval in intervalList) {
                 GameObject t = (interval.overrideTarget ? interval.overrideTarget : target);
