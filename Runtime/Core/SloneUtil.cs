@@ -237,12 +237,13 @@ namespace Slonersoft.SloneUtil.Core
 		/// <param name="goal">goal value</param>
 		/// <param name="speed">rate of change toward the goal</param>
 		/// <returns>Value advanced one frame toward the goal.</returns>
-		public static float AdvanceValue( float val, float goal, float speed) {
+		public static float AdvanceValue( float val, float goal, float speed, bool fixedUpdate = false) {
+			float deltaTime = fixedUpdate ? Time.fixedDeltaTime : Time.deltaTime;
 			if (val < goal) {
-				val += speed * Time.deltaTime;
+				val += speed * deltaTime;
 				val = val > goal ? goal : val;
 			} else if (val > goal) {
-				val -= speed * Time.deltaTime;
+				val -= speed * deltaTime;
 				val = val < goal ? goal : val;
 			}
 			return val;
@@ -265,7 +266,7 @@ namespace Slonersoft.SloneUtil.Core
 			return delta.sqrMagnitude == 0f;
 		}
 
-		public static Vector3 GetTurnToPointDelta(Vector3 fromPoint, Vector3 fromEulerAngles, Vector3 upVec, Vector3 toPoint, float degreesPerSec, bool flatten = false) {
+		public static Vector3 GetTurnToPointDelta(Vector3 fromPoint, Vector3 fromEulerAngles, Vector3 upVec, Vector3 toPoint, float degreesPerSec, bool flatten = false, bool fixedUpdate = false) {
 			// Vector from turning object to its target.
 			Vector3 toFocalPoint = toPoint - fromPoint;
 
@@ -280,10 +281,11 @@ namespace Slonersoft.SloneUtil.Core
 			Vector3 targetAngles = targetRotation.eulerAngles;
 
 			Vector3 newEulerAngles = fromEulerAngles;
-			if (degreesPerSec >= 0f)
-				newEulerAngles = AdvanceEulerAngles (fromEulerAngles, targetAngles, degreesPerSec);
-			else
+			if (degreesPerSec >= 0f) {
+				newEulerAngles = AdvanceEulerAngles (fromEulerAngles, targetAngles, degreesPerSec, fixedUpdate);
+			} else {
 				newEulerAngles = targetAngles;
+			}
 
 			return newEulerAngles - fromEulerAngles;
 		}
@@ -294,12 +296,12 @@ namespace Slonersoft.SloneUtil.Core
 		// goal: goal angle (degrees)
 		// speed: speed of change (in degrees/second)
 		//
-		public static Vector3 AdvanceEulerAngles( Vector3 val, Vector3 goal, float speed)
+		public static Vector3 AdvanceEulerAngles( Vector3 val, Vector3 goal, float speed, bool fixedUpdate)
 		{
 			return new Vector3 (
-				AdvanceAngle (val.x, goal.x, speed),
-				AdvanceAngle (val.y, goal.y, speed),
-				AdvanceAngle (val.z, goal.z, speed)
+				AdvanceAngle (val.x, goal.x, speed, fixedUpdate),
+				AdvanceAngle (val.y, goal.y, speed, fixedUpdate),
+				AdvanceAngle (val.z, goal.z, speed, fixedUpdate)
 			);
 		}
 
@@ -309,11 +311,12 @@ namespace Slonersoft.SloneUtil.Core
 		// goal: goal angle (degrees)
 		// speed: speed of change (in degrees/second)
 		//
-		public static float AdvanceAngle( float val, float goal, float speed)
+		public static float AdvanceAngle( float val, float goal, float speed, bool fixedUpdate = false)
 		{
 			float diff = Mathf.DeltaAngle (val, goal);
-			float maxChange = speed * Time.deltaTime;
+			float maxChange = speed * (fixedUpdate ? Time.fixedDeltaTime : Time.deltaTime);
 
+			var direction = Mathf.Sign(diff) < 0 ? "Negative" : "Positive";
 			if (Mathf.Abs (diff) <= maxChange) {
 				val = goal;
 			} else {
@@ -343,8 +346,8 @@ namespace Slonersoft.SloneUtil.Core
 		/// <param name="goal">goal value</param>
 		/// <param name="speed">rate of change toward the goal</param>
 		/// <returns>Value advanced one frame toward the goal</returns>
-		public static Vector2 AdvanceValue( Vector2 val, Vector2 goal, float speed ) {
-			return new Vector2( AdvanceValue(val.x, goal.x, speed), AdvanceValue(val.y, goal.y, speed));
+		public static Vector2 AdvanceValue( Vector2 val, Vector2 goal, float speed, bool fixedUpdate = false ) {
+			return new Vector2( AdvanceValue(val.x, goal.x, speed, fixedUpdate), AdvanceValue(val.y, goal.y, speed, fixedUpdate));
 		}
 
 		/// <summary>
@@ -354,8 +357,8 @@ namespace Slonersoft.SloneUtil.Core
 		/// <param name="goal">goal value</param>
 		/// <param name="speed">rate of change toward the goal</param>
 		/// <returns>Value advanced one frame toward the goal</returns>
-		public static Vector3 AdvanceValue( Vector3 val, Vector3 goal, float speed ) {
-			return new Vector3( AdvanceValue(val.x, goal.x, speed), AdvanceValue(val.y, goal.y, speed), AdvanceValue (val.z, goal.z, speed));
+		public static Vector3 AdvanceValue( Vector3 val, Vector3 goal, float speed, bool fixedUpdate = false ) {
+			return new Vector3( AdvanceValue(val.x, goal.x, speed, fixedUpdate), AdvanceValue(val.y, goal.y, speed, fixedUpdate), AdvanceValue (val.z, goal.z, speed, fixedUpdate));
 		}
 
 		/// <summary>
@@ -365,8 +368,8 @@ namespace Slonersoft.SloneUtil.Core
 		/// <param name="goal">goal value</param>
 		/// <param name="speed">rate of change toward the goal</param>
 		/// <returns>Value advanced one frame toward the goal</returns>
-		public static Color AdvanceValue( Color val, Color goal, float speed ) {
-			return new Color( AdvanceValue(val.r,goal.r,speed), AdvanceValue(val.g, goal.g, speed), AdvanceValue(val.b, goal.b, speed), AdvanceValue(val.a, goal.a, speed));
+		public static Color AdvanceValue( Color val, Color goal, float speed, bool fixedUpdate = false ) {
+			return new Color( AdvanceValue(val.r,goal.r,speed, fixedUpdate), AdvanceValue(val.g, goal.g, speed, fixedUpdate), AdvanceValue(val.b, goal.b, speed), AdvanceValue(val.a, goal.a, speed, fixedUpdate));
 		}
 
 		// Lerp a color.
