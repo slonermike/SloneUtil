@@ -78,6 +78,9 @@ namespace Slonersoft.SloneUtil.AssetManagement {
 
         // IMPORTANT: needs to be called by the pool owner before destroying the pool.
         public void Destroy() {
+            foreach (var obj in rawPool) {
+                GameObject.Destroy(obj);
+            }
             GameObject.Destroy(poolParent);
         }
     }

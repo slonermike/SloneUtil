@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Slonersoft.SloneUtil.BlipKit;
 
 namespace Slonersoft.SloneUtil.WarKit {
 	public class Warrior : MonoBehaviour {
@@ -53,9 +54,9 @@ namespace Slonersoft.SloneUtil.WarKit {
         //
         public virtual void GiveWeapon(GameObject weaponPrefab, WeaponSlots slot = WeaponSlots.PRIMARY)
         {
-            // Get rid of the old weapon.
+            // Get rid of the old weapon after a time, to allow fx and such to deallocate.
             if (weapons[(int)slot] != null) {
-                GameObject.Destroy (weapons[(int)slot].gameObject);
+                weapons[(int)slot].gameObject.DestroyAfterTime(10f);
             }
 
             if (muzzleTransform == null) {
