@@ -61,7 +61,8 @@ namespace Slonersoft.SloneUtil.AssetManagement {
             free.AddFirst(node);
         }
 
-        ~ObjectPool() {
+        // IMPORTANT: needs to be called by the owner before deleting the object.
+        public void Destroy() {
             GameObject.Destroy(poolParent);
         }
     }
