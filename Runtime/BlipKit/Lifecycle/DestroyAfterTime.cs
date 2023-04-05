@@ -18,6 +18,9 @@ namespace Slonersoft.SloneUtil.BlipKit {
 
 		public float lifetime = 1.0f;
 		public bool doDeathSpawns = false;
+
+		[Tooltip("True to send the blip, but not actually destroy the object")]
+		public bool blipOnly = false;
 		Coroutine coroutine;
 
 		private IEnumerator DestroyAfterTime_coroutine()
@@ -25,7 +28,10 @@ namespace Slonersoft.SloneUtil.BlipKit {
 			yield return new WaitForSeconds (lifetime);
 
 			gameObject.SendBlip(Blip.Type.DIED);
-			GameObject.Destroy (gameObject);
+
+			if (!blipOnly) {
+				GameObject.Destroy (gameObject);
+			}
 		}
 
 		// Use this for initialization
