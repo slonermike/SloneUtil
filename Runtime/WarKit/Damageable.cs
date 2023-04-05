@@ -134,7 +134,7 @@ namespace Slonersoft.SloneUtil.WarKit {
 
 		// Invulnerable until "Start" gets hit.
 		protected bool invulnerable = true;
-		public bool startInvulnerable = false;
+		public float startInvulnerableTime = 0f;
 
 		protected bool _deathPending = false;
 		public bool deathPending {
@@ -155,7 +155,10 @@ namespace Slonersoft.SloneUtil.WarKit {
 
 		protected virtual void Awake()
 		{
-			invulnerable = startInvulnerable;
+			invulnerable = false;
+			if (startInvulnerableTime != 0f) {
+				MakeInvulnerable(startInvulnerableTime);
+			}
 		}
 
 		protected virtual void Start()
@@ -176,6 +179,9 @@ namespace Slonersoft.SloneUtil.WarKit {
 				}
 
 				foreach (GameObject o in childObjects) {
+					if (o == gameObject) {
+						continue;
+					}
 					DamageDelegate d = o.GetOrAddComponent<DamageDelegate>();
 					if (d.master == null) {
 						d.master = this;
@@ -291,10 +297,15 @@ namespace Slonersoft.SloneUtil.WarKit {
 			invulnerable = false;
 		}
 
+		private IEnumerator MakeVulnerable_coroutine(float time_s) {
+			yield return new WaitForSeconds(time_s);
+			MakeVulnerable();
+		}
+
 		public virtual void MakeInvulnerable(float invulnerableTime = -1f)
 		{
 			invulnerable = true;
-			if (invulnerableTime >= 0f) {
+			if (invulnerableTime > 0f) {
 				Invoke ("MakeVulnerable", invulnerableTime);
 			}
 		}
