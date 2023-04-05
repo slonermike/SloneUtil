@@ -7,21 +7,32 @@ using Slonersoft.SloneUtil.Core;
 namespace Slonersoft.SloneUtil.AssetManagement {
     public class ObjectPool<TBehaviour> where TBehaviour : Behaviour
     {
-        private TBehaviour[] rawPool;
+        private List<TBehaviour> rawPool;
         private LinkedList<TBehaviour> free;
         private LinkedList<TBehaviour> allocated;
         private GameObject poolParent;
+        private GameObject originalPrefab;
+        private int pageSize;
 
         public ObjectPool(GameObject prefab, int numToAllocate) {
+            pageSize = numToAllocate;
+            originalPrefab = prefab;
             poolParent = new GameObject($"Object Pool: {prefab.name}");
-            rawPool = new TBehaviour[numToAllocate];
-            for (int i = 0; i < numToAllocate; i++) {
-                rawPool[i] = CoreUtils.InstantiateChild(poolParent, prefab).GetComponent<TBehaviour>();
-                Debug.Assert(rawPool[i] != null, $"Prefab ${prefab.name} for ObjectPool does not have the appropriate behaviour on it.");
-                rawPool[i].gameObject.SetActive(false);
-            }
-            free = new LinkedList<TBehaviour>(rawPool);
+            rawPool = new List<TBehaviour>();
+            free = new LinkedList<TBehaviour>();
             allocated = new LinkedList<TBehaviour>();
+        }
+
+        public void AddObjectsToPool(int numObjects) {
+            Debug.Log($"Allocating Children: {numObjects}");
+            for (int i = 0; i < numObjects; i++) {
+                var newChild = CoreUtils.InstantiateChild(poolParent, originalPrefab).GetComponent<TBehaviour>();
+                Debug.Log($"Created Child: {newChild.name}");
+                Debug.Assert(newChild != null, $"Prefab ${originalPrefab.name} for ObjectPool does not have the appropriate behaviour on it.");
+                rawPool.Add(newChild);
+                newChild.gameObject.SetActive(false);
+                free.AddFirst(newChild);
+            }
         }
 
         /// <summary>
@@ -30,7 +41,8 @@ namespace Slonersoft.SloneUtil.AssetManagement {
         /// <returns>MonoBehaviour or null</returns>
         public TBehaviour Allocate(bool setActive = true) {
             if (free.Count == 0) {
-                return null;
+                AddObjectsToPool(pageSize);
+                Debug.Assert(free.Count >= 1);
             }
 
             LinkedListNode<TBehaviour> node = free.First;

@@ -18,6 +18,7 @@ namespace Slonersoft.SloneUtil.BlipKit {
 
 		public float lifetime = 1.0f;
 		public bool doDeathSpawns = false;
+		Coroutine coroutine;
 
 		private IEnumerator DestroyAfterTime_coroutine()
 		{
@@ -28,8 +29,12 @@ namespace Slonersoft.SloneUtil.BlipKit {
 		}
 
 		// Use this for initialization
-		void Start () {
-			StartCoroutine ( DestroyAfterTime_coroutine());
+		private void OnEnable() {
+			coroutine = StartCoroutine ( DestroyAfterTime_coroutine());
+		}
+
+		private void OnDisable() {
+			StopCoroutine(coroutine);
 		}
 	}
 

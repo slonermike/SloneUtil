@@ -1,5 +1,6 @@
 {
     "name": "Slonersoft.SloneUtil.AssetManagement",
+    "rootNamespace": "",
     "references": [
         "GUID:c510c3f30ccc547fea9684502c46074c"
     ],
