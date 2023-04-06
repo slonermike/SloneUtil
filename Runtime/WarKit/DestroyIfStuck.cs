@@ -10,6 +10,7 @@ public class DestroyIfStuck : MonoBehaviour
     public float minSpeed = 0.01f;
     float stuckTime = 0f;
     Vector3 prevPosition;
+    public bool blipOnly = true;
 
     // Start is called before the first frame update
     void Start()
@@ -29,7 +30,9 @@ public class DestroyIfStuck : MonoBehaviour
 
         if (stuckTime > afterTime) {
             gameObject.SendBlip(Blip.Type.DIED);
-		    GameObject.Destroy (gameObject);
+            if (!blipOnly) {
+                GameObject.Destroy (gameObject);
+            }
         } else {
             prevPosition = transform.position;
         }

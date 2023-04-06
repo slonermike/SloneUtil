@@ -50,9 +50,10 @@ namespace Slonersoft.SloneUtil.BlipKit {
 		/// </summary>
 		/// <param name="gObj">Gameobject to destroy.</param>
 		/// <param name="timeSec">Time in seconds after which to destroy it.</param>
-		public static void DestroyAfterTime(this GameObject gObj, float timeSec) {
+		public static void DestroyAfterTime(this GameObject gObj, float timeSec, bool blipOnly = false) {
 			DestroyAfterTime dat = gObj.AddComponent<DestroyAfterTime> ();
 			dat.lifetime = timeSec;
+			dat.blipOnly = blipOnly;
 		}
 	}
 }

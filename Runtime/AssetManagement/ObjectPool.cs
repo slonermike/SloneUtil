@@ -30,7 +30,6 @@ namespace Slonersoft.SloneUtil.AssetManagement {
         public void AddObjectsToPool(int numObjects) {
             for (int i = 0; i < numObjects; i++) {
                 var newChild = CoreUtils.InstantiateChild(poolParent, originalPrefab);
-                Debug.Assert(newChild != null, $"Prefab ${originalPrefab.name} for ObjectPool does not have the appropriate behaviour on it.");
                 rawPool.Add(newChild);
                 newChild.gameObject.SetActive(false);
                 free.AddFirst(newChild);

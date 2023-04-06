@@ -27,13 +27,14 @@ namespace Slonersoft.SloneUtil.BlipKit {
                     }
                 });
             }
-            return pools[prefab].Allocate();
+            return pools[prefab].Allocate(false);
         }
 
-        public GameObject AllocatePrefab(GameObject prefab, Vector3 position, Quaternion rotation, Transform parent) {
+        public GameObject AllocatePrefab(GameObject prefab, Vector3 position, Quaternion rotation, Transform parent = null) {
             GameObject o = AllocatePrefab(prefab);
             o.transform.SetPositionAndRotation(position, rotation);
             o.transform.SetParent(parent);
+            o.SetActive(true);
             return o;
         }
 
