@@ -37,7 +37,7 @@ namespace Slonersoft.SloneUtil.Movers {
 			}
 
 			if (rb != null) {
-				rb.velocity = curVelocity;
+				rb.linearVelocity = curVelocity;
 			} else {
 				moverTransform.position += curVelocity * Time.deltaTime;
 			}
