@@ -8,10 +8,10 @@ Miscellaneous helpers and utilities for making games with Unity Engine. Distribu
 
 ## Installation
 
-Add as a local package in Unity's Package Manager, or reference it via your `manifest.json`:
+In Unity, open the Package Manager, click the **+** button, and select **Install package from git URL**. Enter:
 
-```json
-"com.slonersoft.slone-util": "file:../SloneUtil"
+```
+git@github.com:slonermike/SloneUtil.git
 ```
 
 ## Modules
