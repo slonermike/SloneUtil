@@ -840,5 +840,43 @@ namespace Slonersoft.SloneUtil.Core
 			}
 			return layerMask;
 		}
+
+		public static void BoundingBoxFromPoints(IEnumerable<Vector3> points, ref Bounds result)
+		{
+			if (!points.Any()) return;
+
+			result.min = new Vector3(
+				points.Min(p => p.x),
+				points.Min(p => p.y),
+				points.Min(p => p.z)
+			);
+			result.max = new Vector3(
+				points.Max(p => p.x),
+				points.Max(p => p.y),
+				points.Max(p => p.z)
+			);
+		}
+
+		public static void ResetLocalValues(this Transform t)
+		{
+			t.localPosition = Vector3.zero;
+			t.localRotation = Quaternion.identity;
+			t.localScale = Vector3.one;
+		}
+
+		public static Vector3 FlattenedOnX(this Vector3 vec)
+		{
+			return new Vector3(0, vec.y, vec.z);
+		}
+
+		public static Vector3 FlattenedOnY(this Vector3 vec)
+		{
+			return new Vector3(vec.x, 0f, vec.z);
+		}
+
+		public static Vector3 FlattenedOnZ(this Vector3 vec)
+		{
+			return new Vector3(vec.x, vec.y, 0f);
+		}
 	}
 }
