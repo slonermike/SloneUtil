@@ -316,7 +316,6 @@ namespace Slonersoft.SloneUtil.Core
 			float diff = Mathf.DeltaAngle (val, goal);
 			float maxChange = speed * (fixedUpdate ? Time.fixedDeltaTime : Time.deltaTime);
 
-			var direction = Mathf.Sign(diff) < 0 ? "Negative" : "Positive";
 			if (Mathf.Abs (diff) <= maxChange) {
 				val = goal;
 			} else {
@@ -369,7 +368,12 @@ namespace Slonersoft.SloneUtil.Core
 		/// <param name="speed">rate of change toward the goal</param>
 		/// <returns>Value advanced one frame toward the goal</returns>
 		public static Color AdvanceValue( Color val, Color goal, float speed, bool fixedUpdate = false ) {
-			return new Color( AdvanceValue(val.r,goal.r,speed, fixedUpdate), AdvanceValue(val.g, goal.g, speed, fixedUpdate), AdvanceValue(val.b, goal.b, speed), AdvanceValue(val.a, goal.a, speed, fixedUpdate));
+			return new Color(
+				AdvanceValue(val.r,goal.r,speed, fixedUpdate),
+				AdvanceValue(val.g, goal.g, speed, fixedUpdate),
+				AdvanceValue(val.b, goal.b, speed, fixedUpdate),
+				AdvanceValue(val.a, goal.a, speed, fixedUpdate)
+			);
 		}
 
 		// Lerp a color.
@@ -527,7 +531,7 @@ namespace Slonersoft.SloneUtil.Core
 		{
 			for (int i = 0; i < shufflePasses; i++) {
 				for (int j = 0; j < array.Length; j++) {
-					int other = UnityEngine.Random.Range (0, array.Length - 1);
+					int other = UnityEngine.Random.Range (0, array.Length);
 					if (other != j) {
 						T o = array [j];
 						array [j] = array [other];
@@ -828,7 +832,7 @@ namespace Slonersoft.SloneUtil.Core
 			for (int i = 0; i < strings.Length; i++) {
 				strings[i] = char.ToUpperInvariant(strings[i][0]) + strings[i].Substring(1);
 			}
-			return String.Join(" ", strings);
+			return String.Join(delimiter, strings);
 		}
 
 		public static LayerMask GetLayerCollisionMask(int layer) {
