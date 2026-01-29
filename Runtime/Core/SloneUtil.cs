@@ -1,11 +1,11 @@
 /************************************************************
  *
  *                      Slone Utils
- *                 2016 Slonersoft Games
+ *                 2016 Mike Slone
  *
  * Generic utilities for making games in the Unity engine.
  *
- * Do what you want.  Distributed with WTFPL license.
+ * Licensed under the MIT License. See LICENSE for details.
  *
  ************************************************************/
 

@@ -1,144 +1,78 @@
 # SloneUtil
-Miscellaneous helpers and utilities for making games with Unity Engine.
+
+Miscellaneous helpers and utilities for making games with Unity Engine. Distributed as a Unity package (`com.slonersoft.slone-util`).
 
 ## License
-This code is freely available to you via the [WTFPL License](https://en.wikipedia.org/wiki/WTFPL)
 
-***
+[MIT License](LICENSE)
 
-## Static Classes
-### SloneUtil
-* **GetOrdinalString**
-  * Get the ordinal string (1st, 2nd, 3rd, etc) associated with a number.
-* **DistanceSquared**
-  * Get the squared distance between this vector and another.
-* **RotateAround**
-  * Rotate a position around a specified axis and center point.
-* **IsAheadOf**
-  * Determine whether one object is ahead of another, according to their forward vectors and positions.
-* **CapMagnitude**
-  * If the length of this vector is greater than the provided maximum, cap it at that length, but maintain the direction.
-* **RandChance**
-  * Returns true a specified percentage of the time.
-* **DestroyAfterTime**
-  * Destroys the specified gameobject after a specified period of time.
-* **WaitForButtonDown**
-  * Waits for button(s) press.  Has optional timeout.
-* **AdvanceValue**
-  * Returns a new value, advancing from the current value toward the goal at a specified rate.
-  * Available for float, Vector2, Vector3 and Color.
-* **AdvanceAngle**
-  * Advances an angle at a specified speed, stopping once it reaches the specified angle.
-* **Lerp (color)**
-  * Lerp from one color to another.
-* **LerpUnbounded**
-  * Lerp a value, continuing beyond 100%.
-  * Available for float, Vector2, and Vector3.
-* **PackDate**
-  * Pack a DateTime into an integer.  Accurate to within a minute.
-  * Can be accurately sorted.
-* **UnpackDate**
-  * Unpack a DateTime which was packed with PackDate.
-* **ShuffleArray**
-  * Shuffle the array.  Can specify the number of times to shuffle.
-* **ParseEnum**
-  * Convert a string to an enum.
-* **InstantiateChild**
-  * Instantiate one object as a child of another.
-* **GetViewportSizeAtDistance**
-  * Returns the world-space width and height of the screen at a specified distance in front of the camera.
-* **RandDirection**
-  * Takes a angleCenter and angleRange, and rotates angleCenter a random amount, up to the specified angleRange.
-* **LerpEulerValues**
-  * Performs a Mathf.LerpAngle on each component of a vector.
-* **ProjectPointToNewCameraPlane**
-  * Projects a point from an original position onto a new camera plane, such that it remains in line according to the view frustum.  Useful for 2.5d games where collision of objects at different z depths needs to line up visually.
-* **IsPointOnScreen**
-  * Returns true if the point is onscreen, false if not.  Takes a "beyondPct" which allows a check to see if it's at least x% beyond/within the bounds of the screen.
-* **CopyNewComponent**
-  * Takes a component and creates a new copy of it on the specified game object.
-* **MoveToCameraByReference**
-  * Places an object relative to the camera by a reference point.
-* **Equals**
-  * Check the equality of two floats within a degree of tolerance.
-* **ConvertColorFromGrayScale**
-  * Take a grayscale color and add hue and saturation from a full-color value to it.
+## Installation
 
-### SloneUtil2D
-* **GetCameraBounds**
-  * Get axis-aligned bounds of the camera.
-* **GetCameraSize**
-  * Get the width and height (x, y) of the camera.
-* **GetMouseWorldPos**
-  * Get the world position of the mouse.
-* **GetWorldPosFromScreen**
-  **Get a position in the world from a screen position.**
-* **IsPointOnscreen**
-  * Returns true if the specified point is on-screen.  False if off-screen.
-* **TurnToPoint**
-  * Call this every frame on a transform to turn it such that the right-vector will eventually face focalPoint.
-* **IsFacing**
-  * Checks to see if one object is facing another in 2 dimensions.
-* **RandPointInCone**
-  * Generates a random point within a 2d cone.
-* **RandDirection**
-  * Generates a random forward vector witin a specified range.
-* **GetVectorToOnscreen**
-  * Get the vector of the nearest path from this point to the nearest edge of the screen.
+Add as a local package in Unity's Package Manager, or reference it via your `manifest.json`:
 
-***
+```json
+"com.slonersoft.slone-util": "file:../SloneUtil"
+```
 
-## MonoBehavior Classes
+## Modules
 
-### DestroyAfterTime
-* Cleans up the object after a specified period of time.
+### [Core](Runtime/Core/)
 
-### DetachFromParent
-* Detaches the object from its parent immediately upon spawning.
-* Allows objects to live on even if their parents will be destroyed after a time.
+General-purpose static utilities and extension methods.
 
-### WaitForButtonPress
-* Will set "expired" to true when either the time expires, or one of the buttons in the "buttons" array has been pressed.
-* This is intended to be created by code.  Don't add this to your object in the inspector, use GameObject.AddComponent.
-* If you're confused by this, you should just use SloneUtil.WaitForButtonDown and forget you ever saw this.
+- **[CoreUtils](Runtime/Core/SloneUtil.cs)** (`Slonersoft.SloneUtil.Core`) — Math helpers (lerp, smooth lerp, advance-toward-goal for floats/vectors/colors/angles), distance/rotation utilities, camera projection, date packing, array shuffling, enum parsing, and more. All public methods have XML doc comments for IntelliSense.
+- **[GameObjectExtensions](Runtime/Core/GameObjectExtensions.cs)** — Extension methods: `GetOrAddComponent<T>()`, `IsAheadOf()`, `IsFacing()`, `DoAfterTime()`.
+- **[SloneUtil2D](Runtime/Core/SloneUtil2D.cs)** — 2D-specific camera and input helpers (camera bounds, mouse world position, 2D facing/turning).
 
-***
+### [Movers](Runtime/Movers/)
 
-## MoverOscillator
-* Oscillates an object's position back and forth.
+Drop-on components for animating transforms without code.
 
-## MoverRotateOscillator
-* Oscillates an object's rotation back and forth.
+| Component | What it does |
+|---|---|
+| `MoverOscillator` | Oscillates position back and forth |
+| `MoverRotateOscillator` | Oscillates rotation back and forth |
+| `MoverScaleOscillator` | Oscillates scale back and forth |
+| `MoverRotator` | Continuous rotation at a specified speed |
+| `MoverScaler` | Scales over time |
+| `MoverTranslator` | Moves at a constant rate per axis |
+| `MoverPositioner` | Moves toward a target position |
+| `MoverRotationPositioner` | Rotates toward a target rotation |
+| `MoveTo` / `RotateTo` | One-shot move/rotate to a destination |
+| `Shaker` | Applies random shake to position |
+| `UVScroller` | Scrolls UVs on a mesh (creates material copy) |
+| `OrientByMotion2D` | Orients sprite by movement direction |
+| `FollowObjectPath` | Follows a sequence of waypoints |
 
-## MoverScaleOscillator
-* Oscillates an object's scale back and forth.
+### [Materials](Runtime/Materials/)
 
-## MoverRotator
-* Rotates an object at a specified speed around each axis.
+Runtime material manipulation without touching source assets.
 
-## MoverScaler
-* Scales an object over time.
+- `MaterialInstancer` / `SharedMaterialInstance` / `SpriteMaterialInstance` — Safe per-object material copies.
+- `MaterialColorChanger` / `MaterialValueChanger` — Animate shader properties over time.
+- `MaterialFlasher` / `ShaderPulse` — Flash or pulse a shader value.
 
-## MoverTranslator
-* Moves the object at a specified rate along each axis.
+### [BlipKit](Runtime/BlipKit/)
 
-## UVScroller
-* Scrolls the UVs on a mesh.  Creates a copy of the material so it doesn't alter the original.
+Lightweight event/message system for game object communication.
 
-***
+- **[Blip](Runtime/BlipKit/Blip.cs)** — Event types: `DAMAGED`, `DIED`, `DESTROYED`, `CREATED`, `ARRIVED`, `ACTIVATE`, `DEACTIVATE`, `FORCE`.
+- **Activators** — Trigger blips automatically (`ObjActivator_Auto`), on interval (`ObjActivator_Interval`), or on physics trigger (`ObjActivator_Trigger`, `ObjActivator_Trigger2D`).
+- **OnEvent handlers** — React to blips by spawning objects, toggling emitters, flashing materials, moving objects, etc.
+- **Lifecycle** — `DestroyAfterTime`, `SpawnOnCreation`, `PrefabPool`.
 
-### AssetPool
-Create a list of prefabs that should be accessible from anywhere in the game.  Create a prefab from that object, and place it in each scene where the list should be accessible.
-Access the prefabs with: AssetPool.pools[AssetPoolType].GetPrefab("Prefab Name")
+### [WarKit](Runtime/WarKit/)
 
-* **GetPrefab**
-  * Retrieve a gamewide prefab from the list.
+Combat building blocks for health, damage, targeting, and weapons.
 
-## Other Classes
+- `Health` / `Damageable` — HP tracking with heal rate, damage callbacks.
+- `DamageOnCollision` / `DamageDelegate` — Apply damage on physics contact.
+- `Weapon` / `WeaponDamager` / `Warrior` — Weapon firing and warrior state.
+- `TeamAssignment` / `Targeting` / `TargetFinder` / `FaceEnemy` — Team-based target acquisition.
+- `FlashOnDamage` / `ExpandOnDamage` / `SpawnOnDeath` / `DetachOnParentDeath` — Visual/lifecycle reactions.
+- `DestroyBeyondBounds` / `DestroyIfStuck` — Cleanup helpers.
+- `WarKitSettings` — Global configuration.
 
-### ValueOscillator
-Oscillates a value back and forth at a specified time interval.
+### [AssetManagement](Runtime/AssetManagement/)
 
-### VectorOscillator
-Oscillates a set of 3 values back and fort on independent timelines.
-
+- **[ObjectPool](Runtime/AssetManagement/ObjectPool.cs)** — Generic object pooling with automatic page-based expansion.
