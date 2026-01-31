@@ -40,6 +40,7 @@ Static utility class in `Slonersoft.SloneUtil.Core`. All public methods have XML
 - `ShuffleArray` — Fisher-Yates in-place shuffle.
 - `ParseEnum` / `EnumToBitwiseFlags` — Enum utilities.
 - `SnakeCaseToUppercase` / `ToRomanNumeral` — String formatting.
+- `StripQuotes` — Remove surrounding double quotes from a string if present.
 
 **Bounds**
 - `BoundingBoxFromPoints` — Compute an AABB from an `IEnumerable<Vector3>`.

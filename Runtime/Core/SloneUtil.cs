@@ -946,5 +946,18 @@ namespace Slonersoft.SloneUtil.Core
 		{
 			return new Vector3(vec.x, vec.y, 0f);
 		}
+
+		/// <summary>
+		/// Removes surrounding double quotes from a string if both present.
+		/// Returns the original string if not quoted.
+		/// </summary>
+		public static string StripQuotes(string str)
+		{
+			if (str.StartsWith("\"") && str.EndsWith("\""))
+			{
+				return str.Substring(1, str.Length-2);
+			}
+			return str;
+		}
 	}
 }
