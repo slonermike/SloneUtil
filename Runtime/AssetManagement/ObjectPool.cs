@@ -30,6 +30,7 @@ namespace Slonersoft.SloneUtil.AssetManagement {
         public void AddObjectsToPool(int numObjects) {
             for (int i = 0; i < numObjects; i++) {
                 var newChild = CoreUtils.InstantiateChild(poolParent, originalPrefab);
+                newChild.name = $"{poolParent.name} #{rawPool.Count}";
                 rawPool.Add(newChild);
                 newChild.gameObject.SetActive(false);
                 free.AddFirst(newChild);

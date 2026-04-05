@@ -16,6 +16,15 @@ namespace Slonersoft.SloneUtil.Movers
 			}
 		}
 
+		private float _pct;
+		public float pct
+		{
+			get
+			{
+				return _pct;
+			}
+		}
+
 		Coroutine moveRoutine = null;
 
 		void OnDisable()
@@ -33,22 +42,34 @@ namespace Slonersoft.SloneUtil.Movers
 
 			float startTime = Time.time;
 
-			if (moveTime > 0) {
-				while (startTime + moveTime > Time.time) {
+			_pct = 0f;
+			if (moveTime > 0)
+			{
+				while (startTime + moveTime > Time.time)
+				{
 					yield return new WaitForFixedUpdate();
-					float pct = (Time.time - startTime) / moveTime;
+					_pct = (Time.time - startTime) / moveTime;
 
-					if (localMovement) {
-						if (smooth) {
-							moverTransform.localPosition = CoreUtils.LerpSmooth (startPosition, newPosition, pct);
-						} else {
-							moverTransform.localPosition = Vector3.Lerp (startPosition, newPosition, pct);
+					if (localMovement)
+					{
+						if (smooth)
+						{
+							moverTransform.localPosition = CoreUtils.LerpSmooth(startPosition, newPosition, _pct);
 						}
-					} else {
-						if (smooth) {
-							moverTransform.position = CoreUtils.LerpSmooth (startPosition, newPosition, pct);
-						} else {
-							moverTransform.position = Vector3.Lerp (startPosition, newPosition, pct);
+						else
+						{
+							moverTransform.localPosition = Vector3.Lerp(startPosition, newPosition, _pct);
+						}
+					}
+					else
+					{
+						if (smooth)
+						{
+							moverTransform.position = CoreUtils.LerpSmooth(startPosition, newPosition, _pct);
+						}
+						else
+						{
+							moverTransform.position = Vector3.Lerp(startPosition, newPosition, _pct);
 						}
 					}
 				}

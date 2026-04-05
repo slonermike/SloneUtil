@@ -13,7 +13,8 @@ using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq; // for array.aggregate
+using System.Linq;
+using System.Numerics; // for array.aggregate
 
 namespace Slonersoft.SloneUtil.Core
 {

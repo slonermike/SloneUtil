@@ -9,7 +9,7 @@ namespace Slonersoft.SloneUtil.WarKit {
         public static WarKitSettings inst {
             get {
                 if (!_inst) {
-                    _inst = GameObject.FindObjectOfType<WarKitSettings>();
+                    _inst = GameObject.FindAnyObjectByType<WarKitSettings>();
                     if (!_inst) {
                         GameObject o = new GameObject();
                         _inst = o.AddComponent<WarKitSettings>();

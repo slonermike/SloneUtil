@@ -18,6 +18,7 @@ namespace Slonersoft.SloneUtil.Movers {
 
 		[Tooltip("True if you want to scale to a multiple of the starting scale.  False if worldspace scale.")]
 		public bool scaleAsMultiplier = true;
+		public bool runOnEnable = true;
 		public Coroutine changeCoroutine;
 
 		IEnumerator Scale_coroutine () {
@@ -42,7 +43,15 @@ namespace Slonersoft.SloneUtil.Movers {
 
 		void OnEnable()
 		{
-			changeCoroutine = StartCoroutine(Scale_coroutine());
+			if (runOnEnable) changeCoroutine = StartCoroutine(Scale_coroutine());
+		}
+
+		public void Scale(float newScale, float scaleTime_sec, bool _scaleAsMultiplier)
+		{
+			scaleGoal = Vector3.one * newScale;
+			scaleTime = scaleTime_sec;
+			scaleAsMultiplier = _scaleAsMultiplier;
+			StartCoroutine(Scale_coroutine());
 		}
 
 		void OnDisable() {

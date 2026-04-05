@@ -25,6 +25,7 @@ namespace Slonersoft.SloneUtil.Movers {
 
 		[Tooltip("True to rotate around local axes, false to rotate around global axes.")]
 		public bool localRotation = false;
+		public bool ignoreTimescale = false;
 
 		Vector3 randomizedRotation;
 
@@ -50,11 +51,13 @@ namespace Slonersoft.SloneUtil.Movers {
 				}
 			}
 
+			float dt = ignoreTimescale ? Time.unscaledDeltaTime : Time.deltaTime;
+
 			Vector3 finalRotation = rotateVector + randomizedRotation;
 			if (localRotation) {
-				moverTransform.Rotate (finalRotation * Time.deltaTime);
+				moverTransform.Rotate (finalRotation * dt);
 			} else {
-				moverTransform.Rotate(finalRotation * Time.deltaTime);
+				moverTransform.Rotate(finalRotation * dt);
 			}
 		}
 

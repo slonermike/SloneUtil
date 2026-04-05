@@ -27,13 +27,13 @@ namespace Slonersoft.SloneUtil.Movers {
 		public Vector3 startOffsetPct;
 
 		[Tooltip("Type of curve on the oscillation.")]
-		public OscillationType curveType = OscillationType.LINEAR;
+		public OscillationType curveType = OscillationType.SMOOTH;
 
 		[Tooltip("True to oscillate in local space, false for global space.")]
 		public bool localMotion = true;
 
-		[Tooltip("True to rotate in both directions, with the start position as the center.")]
-		public bool biDirectional = true;
+		[Tooltip("True to translate in both directions, with the start position as the center.")]
+		public bool biDirectional = false;
 
 		VectorOscillator oscillator;
 		private Vector3 startPos;
@@ -42,7 +42,8 @@ namespace Slonersoft.SloneUtil.Movers {
 		void Start () {
 
 			// Bi-directionals start in the middle of the upswing.
-			if (biDirectional) {
+			if (biDirectional)
+			{
 				startOffsetPct += Vector3.one * 0.25f;
 			}
 
@@ -50,9 +51,10 @@ namespace Slonersoft.SloneUtil.Movers {
 			startPos = localMotion ? moverTransform.localPosition : moverTransform.position;
 		}
 
-		// Update is called once per frame
-		void Update () {
-			Vector3 newPos;
+        // Update is called once per frame
+        void FixedUpdate()
+        {
+         	Vector3 newPos;
 
 			if (biDirectional) {
 				newPos = oscillator.Evaluate (startPos - magnitude, startPos + magnitude);
@@ -64,8 +66,8 @@ namespace Slonersoft.SloneUtil.Movers {
 				moverTransform.localPosition = newPos;
 			} else {
 				moverTransform.position = newPos;
-			}
-		}
+			}   
+        }
 	}
 
 }
