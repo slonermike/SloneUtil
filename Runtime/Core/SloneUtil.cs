@@ -1,11 +1,11 @@
 /************************************************************
  *
  *                      Slone Utils
- *                 2016 Slonersoft Games
+ *                 2016 Mike Slone
  *
  * Generic utilities for making games in the Unity engine.
  *
- * Do what you want.  Distributed with WTFPL license.
+ * Licensed under the MIT License. See LICENSE for details.
  *
  ************************************************************/
 
@@ -250,14 +250,14 @@ namespace Slonersoft.SloneUtil.Core
 			return val;
 		}
 
-		// Call this every frame on a transform to turn it such that the forward-vector will
-		// eventually face focalPoint.
-		//
-		// t: transform to rotate toward focalPoint.
-		// focalPoint: point which you're rotating toward.
-		// degreesPerSec: rate of the turn in degrees/second (default: -1, immediate).
-		//
-		// returns true when it is facing the object.
+		/// <summary>
+		/// Call this every frame on a transform to turn it such that the forward-vector will
+		/// eventually face focalPoint.
+		/// </summary>
+		/// <param name="t">Transform to rotate toward focalPoint.</param>
+		/// <param name="focalPoint">Point which you're rotating toward.</param>
+		/// <param name="degreesPerSec">Rate of the turn in degrees/second (default: -1, immediate).</param>
+		/// <returns>True when the transform is facing the target point.</returns>
 		public static bool TurnToPoint(this Transform t, Vector3 focalPoint, float degreesPerSec = -1f)
 		{
 			Vector3 delta = GetTurnToPointDelta(t.position, t.eulerAngles, t.up, focalPoint, degreesPerSec);
@@ -267,8 +267,18 @@ namespace Slonersoft.SloneUtil.Core
 			return delta.sqrMagnitude == 0f;
 		}
 
+		/// <summary>
+		/// Gets the euler angle delta needed to turn from one point toward another.
+		/// </summary>
+		/// <param name="fromPoint">Position of the turning object.</param>
+		/// <param name="fromEulerAngles">Current euler angles of the turning object.</param>
+		/// <param name="upVec">Up vector of the turning object.</param>
+		/// <param name="toPoint">Target point to turn toward.</param>
+		/// <param name="degreesPerSec">Rate of turn in degrees/second. Negative for immediate.</param>
+		/// <param name="flatten">If true, project the direction onto the plane defined by upVec.</param>
+		/// <param name="fixedUpdate">If true, use fixedDeltaTime instead of deltaTime.</param>
+		/// <returns>Euler angle delta to apply to the turning object.</returns>
 		public static Vector3 GetTurnToPointDelta(Vector3 fromPoint, Vector3 fromEulerAngles, Vector3 upVec, Vector3 toPoint, float degreesPerSec, bool flatten = false, bool fixedUpdate = false) {
-			// Vector from turning object to its target.
 			Vector3 toFocalPoint = toPoint - fromPoint;
 
 			if (flatten) {
@@ -291,12 +301,14 @@ namespace Slonersoft.SloneUtil.Core
 			return newEulerAngles - fromEulerAngles;
 		}
 
-		// Advances a set of euler angles at a specified speed, stopping once it reaches the specified angles.
-		//
-		// val: current angles (degrees)
-		// goal: goal angle (degrees)
-		// speed: speed of change (in degrees/second)
-		//
+		/// <summary>
+		/// Advances a set of euler angles at a specified speed, stopping once it reaches the specified angles.
+		/// </summary>
+		/// <param name="val">Current angles (degrees).</param>
+		/// <param name="goal">Goal angles (degrees).</param>
+		/// <param name="speed">Speed of change (in degrees/second).</param>
+		/// <param name="fixedUpdate">If true, use fixedDeltaTime instead of deltaTime.</param>
+		/// <returns>Euler angles advanced one frame toward the goal.</returns>
 		public static Vector3 AdvanceEulerAngles( Vector3 val, Vector3 goal, float speed, bool fixedUpdate)
 		{
 			return new Vector3 (
@@ -306,18 +318,19 @@ namespace Slonersoft.SloneUtil.Core
 			);
 		}
 
-		// Advances an angle at a specified speed, stopping once it reaches the specified angle.
-		//
-		// val: current angle (degrees)
-		// goal: goal angle (degrees)
-		// speed: speed of change (in degrees/second)
-		//
+		/// <summary>
+		/// Advances an angle at a specified speed, stopping once it reaches the specified angle.
+		/// </summary>
+		/// <param name="val">Current angle (degrees).</param>
+		/// <param name="goal">Goal angle (degrees).</param>
+		/// <param name="speed">Speed of change (in degrees/second).</param>
+		/// <param name="fixedUpdate">If true, use fixedDeltaTime instead of deltaTime.</param>
+		/// <returns>Angle advanced one frame toward the goal.</returns>
 		public static float AdvanceAngle( float val, float goal, float speed, bool fixedUpdate = false)
 		{
 			float diff = Mathf.DeltaAngle (val, goal);
 			float maxChange = speed * (fixedUpdate ? Time.fixedDeltaTime : Time.deltaTime);
 
-			var direction = Mathf.Sign(diff) < 0 ? "Negative" : "Positive";
 			if (Mathf.Abs (diff) <= maxChange) {
 				val = goal;
 			} else {
@@ -326,12 +339,13 @@ namespace Slonersoft.SloneUtil.Core
 			return val;
 		}
 
-		// Lerps from one set of Euler angles to another.
-		//
-		// a: The start angles.
-		// b: The end angles.
-		// pct: The position [0,1] along the lerp.
-		//
+		/// <summary>
+		/// Lerps from one set of Euler angles to another.
+		/// </summary>
+		/// <param name="a">The start angles.</param>
+		/// <param name="b">The end angles.</param>
+		/// <param name="pct">The position [0,1] along the lerp.</param>
+		/// <returns>Interpolated euler angles.</returns>
 		public static Vector3 LerpEulerAngles( Vector3 a, Vector3 b, float pct)
 		{
 			return new Vector3 (
@@ -370,65 +384,68 @@ namespace Slonersoft.SloneUtil.Core
 		/// <param name="speed">rate of change toward the goal</param>
 		/// <returns>Value advanced one frame toward the goal</returns>
 		public static Color AdvanceValue( Color val, Color goal, float speed, bool fixedUpdate = false ) {
-			return new Color( AdvanceValue(val.r,goal.r,speed, fixedUpdate), AdvanceValue(val.g, goal.g, speed, fixedUpdate), AdvanceValue(val.b, goal.b, speed), AdvanceValue(val.a, goal.a, speed, fixedUpdate));
+			return new Color(
+				AdvanceValue(val.r,goal.r,speed, fixedUpdate),
+				AdvanceValue(val.g, goal.g, speed, fixedUpdate),
+				AdvanceValue(val.b, goal.b, speed, fixedUpdate),
+				AdvanceValue(val.a, goal.a, speed, fixedUpdate)
+			);
 		}
 
-		// Lerp a color.
-		//
-		// from: starting color, returned if pct is 0.0
-		// to: ending color, returned if pct is 1.0
-		// pct: percentage (0.0-1.0) along the continuum between from and to.
-		//
 		/// <summary>
-		/// Lerps from one color to
+		/// Lerps from one color to another.
 		/// </summary>
-		/// <param name="from"></param>
-		/// <param name="to"></param>
-		/// <param name="pct"></param>
-		/// <returns></returns>
+		/// <param name="from">Starting color, returned if pct is 0.0.</param>
+		/// <param name="to">Ending color, returned if pct is 1.0.</param>
+		/// <param name="pct">Percentage (0.0-1.0) along the continuum between from and to.</param>
+		/// <returns>Interpolated color.</returns>
 		public static Color Lerp( Color from, Color to, float pct )
 		{
 			return new Color (Mathf.Lerp (from.r, to.r, pct), Mathf.Lerp (from.g, to.g, pct), Mathf.Lerp (from.b, to.b, pct), Mathf.Lerp (from.a, to.a, pct));
 		}
 
-		// Lerp a float, continuing beyond 100%.
-		//
-		// from: starting value, returned if pct is 0.0
-		// to: ending value, returned if pct is 1.0
-		// pct: percentage (0.0-inf) along the continuum between from and to
-		//
+		/// <summary>
+		/// Lerp a float, continuing beyond 100%.
+		/// </summary>
+		/// <param name="from">Starting value, returned if pct is 0.0.</param>
+		/// <param name="to">Ending value, returned if pct is 1.0.</param>
+		/// <param name="pct">Percentage (0.0-inf) along the continuum between from and to.</param>
+		/// <returns>Interpolated value.</returns>
 		public static float LerpUnbounded(float from, float to, float pct)
 		{
 			return from + ((to - from) * pct);
 		}
 
-		// Lerp a vector, continuing beyond 100%.
-		//
-		// from: starting value, returned if pct is 0.0
-		// to: ending value, returned if pct is 1.0
-		// pct: percentage (0.0-inf) along the continuum between from and to
-		//
+		/// <summary>
+		/// Lerp a Vector2, continuing beyond 100%.
+		/// </summary>
+		/// <param name="from">Starting value, returned if pct is 0.0.</param>
+		/// <param name="to">Ending value, returned if pct is 1.0.</param>
+		/// <param name="pct">Percentage (0.0-inf) along the continuum between from and to.</param>
+		/// <returns>Interpolated vector.</returns>
 		public static Vector2 LerpUnbounded(Vector2 from, Vector2 to, float pct)
 		{
 			return from + ((to - from) * pct);
 		}
 
-		// Lerp a vector, continuing beyond 100%.
-		//
-		// from: starting value, returned if pct is 0.0
-		// to: ending value, returned if pct is 1.0
-		// pct: percentage (0.0-inf) along the continuum between from and to
-		//
+		/// <summary>
+		/// Lerp a Vector3, continuing beyond 100%.
+		/// </summary>
+		/// <param name="from">Starting value, returned if pct is 0.0.</param>
+		/// <param name="to">Ending value, returned if pct is 1.0.</param>
+		/// <param name="pct">Percentage (0.0-inf) along the continuum between from and to.</param>
+		/// <returns>Interpolated vector.</returns>
 		public static Vector3 LerpUnbounded(Vector3 from, Vector3 to, float pct)
 		{
 			return from + ((to - from) * pct);
 		}
 
-		// Smooth a value between 0 and 1 to be used for smooth lerping.
-		//
-		// pct: Linear percentage.
-		// oscillate: False to cap between 0 and 1, True to oscillate values beyond range of 0-1.
-		//
+		/// <summary>
+		/// Smooth a value between 0 and 1 to be used for smooth lerping.
+		/// </summary>
+		/// <param name="pct">Linear percentage.</param>
+		/// <param name="oscillate">False to cap between 0 and 1, true to oscillate values beyond range of 0-1.</param>
+		/// <returns>Smoothed value.</returns>
 		private static float SmoothValue(float pct, bool oscillate = false)
 		{
 			if (!oscillate) {
@@ -439,39 +456,42 @@ namespace Slonersoft.SloneUtil.Core
 			return ((-1f * Mathf.Cos(pct * Mathf.PI)) + 1f) * 0.5f;
 		}
 
-		// Lerp from one value to another using a smoothed lerp to ease departure and approach.
-		//
-		// from: starting value, returned if pct is 0.0
-		// to: ending value, returned if pct is 1.0
-		// pct: percentage (0.0-1.0) along the continuum between from and to
-		// oscillate: True if values beyond 0-1 should oscillate back to where they started.
-		//
+		/// <summary>
+		/// Lerp from one value to another using a smoothed lerp to ease departure and approach.
+		/// </summary>
+		/// <param name="from">Starting value, returned if pct is 0.0.</param>
+		/// <param name="to">Ending value, returned if pct is 1.0.</param>
+		/// <param name="pct">Percentage (0.0-1.0) along the continuum between from and to.</param>
+		/// <param name="oscillate">True if values beyond 0-1 should oscillate back to where they started.</param>
+		/// <returns>Smoothly interpolated value.</returns>
 		public static float LerpSmooth(float from, float to, float pct, bool oscillate = false)
 		{
 			float smoothed = SmoothValue (pct, oscillate);
 			return CoreUtils.LerpUnbounded (from, to, smoothed);
 		}
 
-		// Lerp from one vector to another using a smoothed lerp to ease departure and approach.
-		//
-		// from: starting value, returned if pct is 0.0
-		// to: ending value, returned if pct is 1.0
-		// pct: percentage (0.0-1.0) along the continuum between from and to
-		// oscillate: True if values beyond 0-1 should oscillate back to where they started.
-		//
+		/// <summary>
+		/// Lerp from one Vector2 to another using a smoothed lerp to ease departure and approach.
+		/// </summary>
+		/// <param name="from">Starting value, returned if pct is 0.0.</param>
+		/// <param name="to">Ending value, returned if pct is 1.0.</param>
+		/// <param name="pct">Percentage (0.0-1.0) along the continuum between from and to.</param>
+		/// <param name="oscillate">True if values beyond 0-1 should oscillate back to where they started.</param>
+		/// <returns>Smoothly interpolated vector.</returns>
 		public static Vector2 LerpSmooth(Vector2 from, Vector2 to, float pct, bool oscillate = false)
 		{
 			float smoothed = SmoothValue (pct, oscillate);
 			return CoreUtils.LerpUnbounded (from, to, smoothed);
 		}
 
-		// Lerp from one vector to another using a smoothed lerp to ease departure and approach.
-		//
-		// from: starting value, returned if pct is 0.0
-		// to: ending value, returned if pct is 1.0
-		// pct: percentage (0.0-1.0) along the continuum between from and to
-		// oscillate: True if values beyond 0-1 should oscillate back to where they started.
-		//
+		/// <summary>
+		/// Lerp from one Vector3 to another using a smoothed lerp to ease departure and approach.
+		/// </summary>
+		/// <param name="from">Starting value, returned if pct is 0.0.</param>
+		/// <param name="to">Ending value, returned if pct is 1.0.</param>
+		/// <param name="pct">Percentage (0.0-1.0) along the continuum between from and to.</param>
+		/// <param name="oscillate">True if values beyond 0-1 should oscillate back to where they started.</param>
+		/// <returns>Smoothly interpolated vector.</returns>
 		public static Vector3 LerpSmooth(Vector3 from, Vector3 to, float pct, bool oscillate = false)
 		{
 			float smoothed = SmoothValue (pct, oscillate);
@@ -489,12 +509,12 @@ namespace Slonersoft.SloneUtil.Core
 		const int MONTH_SHIFT = 16;
 		const int YEAR_SHIFT = 20;
 
-		// Pack a date into an integer.  Accurate to within a minute.
-		//
-		// NOTE: can accurately sort using these integers.
-		//
-		// t: time to pack into the integer
-		//
+		/// <summary>
+		/// Pack a date into an integer. Accurate to within a minute.
+		/// Can accurately sort using these integers.
+		/// </summary>
+		/// <param name="t">Time to pack into the integer.</param>
+		/// <returns>Integer-packed date.</returns>
 		public static int PackDate( System.DateTime t )
 		{
 			int minute = t.Minute;
@@ -506,10 +526,11 @@ namespace Slonersoft.SloneUtil.Core
 			return minute | hour | day | month | year;
 		}
 
-		// Unpack a date packed with PackDate.
-		//
-		// i: integer that has been created from a packed date
-		//
+		/// <summary>
+		/// Unpack a date packed with PackDate.
+		/// </summary>
+		/// <param name="i">Integer that has been created from a packed date.</param>
+		/// <returns>Unpacked DateTime.</returns>
 		public static System.DateTime UnpackDate( int i )
 		{
 			int minute = i & MINUTE_MASK;
@@ -520,15 +541,17 @@ namespace Slonersoft.SloneUtil.Core
 			return new System.DateTime (year, month, day, hour, minute, 0);
 		}
 
-		// Shuffles an array (in place).
-		//
-		// shufflePasses: the number of times we should shuffle the array.
-		//
+		/// <summary>
+		/// Shuffles an array in place.
+		/// </summary>
+		/// <typeparam name="T">Element type of the array.</typeparam>
+		/// <param name="array">The array to shuffle.</param>
+		/// <param name="shufflePasses">The number of times to shuffle the array.</param>
 		public static void ShuffleArray<T>(T[] array, int shufflePasses = 1)
 		{
 			for (int i = 0; i < shufflePasses; i++) {
 				for (int j = 0; j < array.Length; j++) {
-					int other = UnityEngine.Random.Range (0, array.Length - 1);
+					int other = UnityEngine.Random.Range (0, array.Length);
 					if (other != j) {
 						T o = array [j];
 						array [j] = array [other];
@@ -538,30 +561,35 @@ namespace Slonersoft.SloneUtil.Core
 			}
 		}
 
-		// Get an enum from the matching string.
-		//
-		// value: string value matching an enum value in T
-		//
+		/// <summary>
+		/// Get an enum value from the matching string.
+		/// </summary>
+		/// <typeparam name="T">The enum type to parse into.</typeparam>
+		/// <param name="value">String value matching an enum value in T.</param>
+		/// <returns>The parsed enum value.</returns>
 		public static T ParseEnum<T>(string value)
 		{
 			return (T) Enum.Parse(typeof(T), value, true);
 		}
 
-		// Create a bitwise flag integer from a list of flags.
-		//
-		// flags: array of the enums that will be included in the bitwise field.
-		//
+		/// <summary>
+		/// Create a bitwise flag integer from a list of enum flags.
+		/// </summary>
+		/// <typeparam name="T">The enum type.</typeparam>
+		/// <param name="flags">Array of the enums that will be included in the bitwise field.</param>
+		/// <returns>Bitwise integer combining all flags.</returns>
 		public static int EnumToBitwiseFlags<T>(T[] flags) where T : System.Enum {
         return flags.Aggregate(0, (acc, val) => {
             return acc |= (1 << (int)(object)val);
         });
     }
 
-		// Instantiate one object as a child of another.
-		//
-		// parentTransform: The transform to which the new object should be parented.
-		// prefab: the prefab from which the object should be created.
-		//
+		/// <summary>
+		/// Instantiate one object as a child of another.
+		/// </summary>
+		/// <param name="parentTransform">The transform to which the new object should be parented.</param>
+		/// <param name="prefab">The prefab from which the object should be created.</param>
+		/// <returns>The instantiated child GameObject.</returns>
 		public static GameObject InstantiateChild(Transform parentTransform, GameObject prefab)
 		{
 			GameObject o = GameObject.Instantiate (prefab, parentTransform.position, parentTransform.rotation) as GameObject;
@@ -569,21 +597,23 @@ namespace Slonersoft.SloneUtil.Core
 			return o;
 		}
 
-		// Instantiate one object as a child of another.
-		//
-		// parentObj: The object to which the new object should be parented.
-		// prefab: the prefab from which the object should be created.
-		//
+		/// <summary>
+		/// Instantiate one object as a child of another.
+		/// </summary>
+		/// <param name="parentObj">The object to which the new object should be parented.</param>
+		/// <param name="prefab">The prefab from which the object should be created.</param>
+		/// <returns>The instantiated child GameObject.</returns>
 		public static GameObject InstantiateChild(GameObject parentObj, GameObject prefab)
 		{
 			return InstantiateChild (parentObj.transform, prefab);
 		}
 
-		// Get the viewable width and height (x, y) at the specified distance from the camera.
-		//
-		// distance: units from camera at which we're checking the view size.
-		// cam: Camera on which to check the viewable size.  Defaults to main camera.
-		//
+		/// <summary>
+		/// Get the viewable width and height (x, y) at the specified distance from the camera.
+		/// </summary>
+		/// <param name="distance">Units from camera at which we're checking the view size.</param>
+		/// <param name="cam">Camera on which to check the viewable size. Defaults to main camera.</param>
+		/// <returns>Viewport size as (width, height).</returns>
 		public static Vector2 GetViewportSizeAtDistance(float distance, Camera cam = null)
 		{
 			if (distance < 0f) {
@@ -604,12 +634,13 @@ namespace Slonersoft.SloneUtil.Core
 			return new Vector2 (width, height);
 		}
 
-		// Projects a point onto a different camera plane.
-		//
-		// fromPoint: the point to project.
-		// toDistance: the distance from the camera to the new camera plane.
-		// cam: the camera whose planes we're using (defaults to Camera.main).
-		//
+		/// <summary>
+		/// Projects a point onto a different camera plane.
+		/// </summary>
+		/// <param name="fromPoint">The point to project.</param>
+		/// <param name="toDistance">The distance from the camera to the new camera plane.</param>
+		/// <param name="cam">The camera whose planes we're using (defaults to Camera.main).</param>
+		/// <returns>The projected point on the new camera plane.</returns>
 		public static Vector3 ProjectPointToNewCameraPlane(Vector3 fromPoint, float toDistance, Camera cam = null)
 		{
 			if (cam == null) {
@@ -634,12 +665,13 @@ namespace Slonersoft.SloneUtil.Core
 			return cam.transform.position + (x * rVec) + (y * uVec) + (toDistance * fVec);
 		}
 
-		// Gets the multiplier used to project a point or scale from one camera distance plane to another.
-		//
-		// fromPoint: The point being projected.
-		// toDistance: The distance from the camera onto which we're projecting.
-		// cam: the camera whose planes we're using (defaults to Camera.main).
-		//
+		/// <summary>
+		/// Gets the multiplier used to project a point or scale from one camera distance plane to another.
+		/// </summary>
+		/// <param name="fromPoint">The point being projected.</param>
+		/// <param name="toDistance">The distance from the camera onto which we're projecting.</param>
+		/// <param name="cam">The camera whose planes we're using (defaults to Camera.main).</param>
+		/// <returns>Projection scalar multiplier.</returns>
 		public static float GetCameraPlaneProjectionScalar(Vector3 fromPoint, float toDistance, Camera cam = null)
 		{
 			if (cam == null) {
@@ -658,12 +690,13 @@ namespace Slonersoft.SloneUtil.Core
 			return toDistance / fromDistance;
 		}
 
-		// Returns true if the point is on screen.  Has optional variable to allow an overlap
-		// to detect things that are almost on screen.
-		//
-		// pt: The point to check whether it's onscreen.
-		// beyondPct: The percentage beyond the edge of the screen that we still consider onscreen.
-		//
+		/// <summary>
+		/// Returns true if the point is on screen. Has optional overlap to detect things that are almost on screen.
+		/// </summary>
+		/// <param name="cam">The camera to check against.</param>
+		/// <param name="pt">The point to check whether it's onscreen.</param>
+		/// <param name="beyondPct">The percentage beyond the edge of the screen that we still consider onscreen.</param>
+		/// <returns>True if the point is on (or near) screen.</returns>
 		public static bool IsPointOnscreen(this Camera cam, Vector3 pt, float beyondPct = 0f)
 		{
 			Vector3 screenPoint = cam.WorldToViewportPoint(pt);
@@ -678,11 +711,12 @@ namespace Slonersoft.SloneUtil.Core
 			return true;
 		}
 
-		// Returns true if the world position appears on any screen.
-		//
-		// pt: world position
-		// beyondPct: The percentage beyond the edge of the screen that we still consider onscreen.
-		//
+		/// <summary>
+		/// Returns true if the world position appears on any screen.
+		/// </summary>
+		/// <param name="pt">World position.</param>
+		/// <param name="beyondPct">The percentage beyond the edge of the screen that we still consider onscreen.</param>
+		/// <returns>True if the point is on any active camera's screen.</returns>
 		public static bool IsPointOnAnyScreen(Vector3 pt, float beyondPct = 0f) {
 			foreach (Camera c in Camera.allCameras) {
 				if (c.IsPointOnscreen(pt, beyondPct)) {
@@ -693,8 +727,12 @@ namespace Slonersoft.SloneUtil.Core
 			return false;
 		}
 
-		// Get the last item in a list.
-		//
+		/// <summary>
+		/// Get the last item in a list.
+		/// </summary>
+		/// <typeparam name="T">Element type of the list.</typeparam>
+		/// <param name="list">The list to get the last item from.</param>
+		/// <returns>The last item, or default(T) if the list is empty.</returns>
 		public static T Last<T>(this List<T> list)
 		{
 			if (list.Count == 0) {
@@ -704,13 +742,13 @@ namespace Slonersoft.SloneUtil.Core
 			return list [list.Count - 1];
 		}
 
-		// Creates a new component on the object copied from original.
-		//
-		// original: the original component.
-		// destination: the object onto which we're instantiating the component.
-		//
-		// returns: new component.
-		//
+		/// <summary>
+		/// Creates a new component on the object copied from the original.
+		/// </summary>
+		/// <typeparam name="T">The component type.</typeparam>
+		/// <param name="original">The original component to copy from.</param>
+		/// <param name="destination">The object onto which we're instantiating the component.</param>
+		/// <returns>The new component with copied field values.</returns>
 		public static T CopyNewComponent<T>(T original, GameObject destination) where T : Component
 		{
 			System.Type type = original.GetType();
@@ -723,13 +761,13 @@ namespace Slonersoft.SloneUtil.Core
 			return copy as T;
 		}
 
-		// Moves the object to the camera such that it's lined up by the refTransform being where
-		// the camera is.
-		//
-		// t: The transform to move.
-		// refTransform: the transform that we use to align to the camera.
-		// cam: The camera to use.  Camera.main by default.
-		//
+		/// <summary>
+		/// Moves the object to the camera such that it's lined up by the refTransform being where
+		/// the camera is.
+		/// </summary>
+		/// <param name="t">The transform to move.</param>
+		/// <param name="refTransform">The transform that we use to align to the camera.</param>
+		/// <param name="cam">The camera to use. Camera.main by default.</param>
 		public static void MoveToCameraByReference(Transform t, Transform refTransform, Camera cam = null)
 		{
 			if (cam == null) {
@@ -750,12 +788,13 @@ namespace Slonersoft.SloneUtil.Core
 			t.SetParent (prevParent);
 		}
 
-		// Check if two values are equal with a tolerance level.
-		//
-		// val1: first value
-		// val2: second value
-		// epsilon: maximum acceptable difference between the two.
-		//
+		/// <summary>
+		/// Check if two values are equal with a tolerance level.
+		/// </summary>
+		/// <param name="val1">First value.</param>
+		/// <param name="val2">Second value.</param>
+		/// <param name="epsilon">Maximum acceptable difference between the two.</param>
+		/// <returns>True if the values are within epsilon of each other.</returns>
 		public static bool Equals(float val1, float val2, float epsilon)
 		{
 			return Mathf.Abs (val2 - val1) < epsilon;
@@ -829,9 +868,14 @@ namespace Slonersoft.SloneUtil.Core
 			for (int i = 0; i < strings.Length; i++) {
 				strings[i] = char.ToUpperInvariant(strings[i][0]) + strings[i].Substring(1);
 			}
-			return String.Join(" ", strings);
+			return String.Join(delimiter, strings);
 		}
 
+		/// <summary>
+		/// Gets the collision mask for the specified layer.
+		/// </summary>
+		/// <param name="layer">The layer index to get the collision mask for.</param>
+		/// <returns>LayerMask representing all layers that collide with the specified layer.</returns>
 		public static LayerMask GetLayerCollisionMask(int layer) {
 			int layerMask = 0;
 			for (int i = 0; i < 32; i++) {
@@ -840,6 +884,81 @@ namespace Slonersoft.SloneUtil.Core
 				}
 			}
 			return layerMask;
+		}
+
+		/// <summary>
+		/// Computes an axis-aligned bounding box from a set of points.
+		/// </summary>
+		/// <param name="points">The points to compute bounds from.</param>
+		/// <param name="result">The Bounds struct to populate with min/max values.</param>
+		public static void BoundingBoxFromPoints(IEnumerable<Vector3> points, ref Bounds result)
+		{
+			if (!points.Any()) return;
+
+			result.min = new Vector3(
+				points.Min(p => p.x),
+				points.Min(p => p.y),
+				points.Min(p => p.z)
+			);
+			result.max = new Vector3(
+				points.Max(p => p.x),
+				points.Max(p => p.y),
+				points.Max(p => p.z)
+			);
+		}
+
+		/// <summary>
+		/// Resets a transform's local position, rotation, and scale to identity values.
+		/// </summary>
+		/// <param name="t">The transform to reset.</param>
+		public static void ResetLocalValues(this Transform t)
+		{
+			t.localPosition = Vector3.zero;
+			t.localRotation = Quaternion.identity;
+			t.localScale = Vector3.one;
+		}
+
+		/// <summary>
+		/// Returns the vector with the X component zeroed out.
+		/// </summary>
+		/// <param name="vec">The source vector.</param>
+		/// <returns>Vector with X set to 0.</returns>
+		public static Vector3 FlattenedOnX(this Vector3 vec)
+		{
+			return new Vector3(0, vec.y, vec.z);
+		}
+
+		/// <summary>
+		/// Returns the vector with the Y component zeroed out.
+		/// </summary>
+		/// <param name="vec">The source vector.</param>
+		/// <returns>Vector with Y set to 0.</returns>
+		public static Vector3 FlattenedOnY(this Vector3 vec)
+		{
+			return new Vector3(vec.x, 0f, vec.z);
+		}
+
+		/// <summary>
+		/// Returns the vector with the Z component zeroed out.
+		/// </summary>
+		/// <param name="vec">The source vector.</param>
+		/// <returns>Vector with Z set to 0.</returns>
+		public static Vector3 FlattenedOnZ(this Vector3 vec)
+		{
+			return new Vector3(vec.x, vec.y, 0f);
+		}
+
+		/// <summary>
+		/// Removes surrounding double quotes from a string if both present.
+		/// Returns the original string if not quoted.
+		/// </summary>
+		public static string StripQuotes(string str)
+		{
+			if (str.StartsWith("\"") && str.EndsWith("\""))
+			{
+				return str.Substring(1, str.Length-2);
+			}
+			return str;
 		}
 	}
 }
