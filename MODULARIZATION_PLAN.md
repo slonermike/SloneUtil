@@ -23,7 +23,7 @@ Drop `Slonersoft.SloneUtil.*`. Use a flat two-segment scheme:
 | Core | `Slone.Core` | `Slone.Core2D` |
 | Assets | `Slone.Assets` | — |
 | Materials | `Slone.Materials` | — |
-| Movers | `Slone.Movers` | `Slone.Movers2D` |
+| Movers | `Slone.Movers` | — |
 
 `2D` appended directly to the module name — valid C# identifiers, readable at a glance. Same package, separate namespace.
 
@@ -76,11 +76,10 @@ All three leaf packages depend only on Core. No inter-leaf dependencies.
 ---
 
 ### `com.slone.movers`
-**Namespaces**: `Slone.Movers` / `Slone.Movers2D`
+**Namespace**: `Slone.Movers`
 **Dependencies**: `com.slone.core`
 
-- `OrientByMotion2D` → namespace `Slone.Movers2D`
-- Everything else → `Slone.Movers`
+- No changes needed
 
 ---
 
